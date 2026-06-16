@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Gestão de Pedidos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    header {
+      background: #222;
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+    }
+
+    header p {
+      margin: 0;
+      opacity: 0.85;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      color: #222;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    li:last-child {
+      border-bottom: none;
+    }
+
+    .product-name {
+      font-weight: 600;
+    }
+
+    .price {
+      color: #666;
+      margin-left: 8px;
+    }
+
+    button {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background: #218838;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background: #f0f0f0;
+    }
+
+    tfoot td {
+      font-weight: 700;
+    }
+
+    .summary-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .summary-list li {
+      margin-bottom: 8px;
+    }
+
+    footer {
+      margin-top: 30px;
+      text-align: center;
+      color: #555;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>SGP - Sistema de Gestão de Pedidos</h1>
+      <p>Projeto Integrador - Técnico em Desenvolvimento de Sistemas</p>
+    </header>
+
+    <div class="card">
+      <h2>Produtos</h2>
+      <ul>
+        <li>
+          <div>
+            <span class="product-name">Hambúrguer</span>
+            <span class="price">R$ 18,50</span>
+          </div>
+          <button data-name="Hambúrguer" data-price="18.5">Adicionar</button>
+        </li>
+        <li>
+          <div>
+            <span class="product-name">Pizza</span>
+            <span class="price">R$ 45,00</span>
+          </div>
+          <button data-name="Pizza" data-price="45">Adicionar</button>
+        </li>
+        <li>
+          <div>
+            <span class="product-name">Refrigerante</span>
+            <span class="price">R$ 7,50</span>
+          </div>
+          <button data-name="Refrigerante" data-price="7.5">Adicionar</button>
+        </li>
+        <li>
+          <div>
+            <span class="product-name">Batata Frita</span>
+            <span class="price">R$ 15,00</span>
+          </div>
+          <button data-name="Batata Frita" data-price="15">Adicionar</button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Pedidos Recentes</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Pedido</th>
+            <th>Cliente</th>
+            <th>Status</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="order-table-body">
+          <tr>
+            <td>101</td>
+            <td>João</td>
+            <td>Em preparação</td>
+            <td>R$ 52,00</td>
+          </tr>
+          <tr>
+            <td>102</td>
+            <td>Maria</td>
+            <td>Concluído</td>
+            <td>R$ 25,50</td>
+          </tr>
+          <tr>
+            <td>103</td>
+            <td>Carlos</td>
+            <td>Pendente</td>
+            <td>R$ 73,00</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Resumo</h2>
+      <ul class="summary-list">
+        <li>Pedidos Hoje: <strong id="total-orders">48</strong></li>
+        <li>Vendas: <strong id="sales-value">R$ 2.540</strong></li>
+        <li>Clientes: <strong id="clients-count">32</strong></li>
+      </ul>
+    </div>
+
+    <footer>
+      <p>Projeto desenvolvido por Marcus Vinicius Duarte Batista</p>
+    </footer>
+  </div>
+
+  <script>
+    const buttons = document.querySelectorAll('button[data-name]');
+    const totalOrdersEl = document.getElementById('total-orders');
+    const salesValueEl = document.getElementById('sales-value');
+    let totalOrders = 48;
+    let salesValue = 2540.00;
+    let nextOrderId = 104;
+    const orderTableBody = document.getElementById('order-table-body');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const name = button.dataset.name;
+        const price = parseFloat(button.dataset.price);
+        totalOrders += 1;
+        salesValue += price;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${nextOrderId}</td>
+          <td>Cliente novo</td>
+          <td>Recebido</td>
+          <td>R$ ${price.toFixed(2).replace('.', ',')}</td>
+        `;
+        orderTableBody.appendChild(row);
+        nextOrderId += 1;
+
+        totalOrdersEl.textContent = totalOrders;
+        salesValueEl.textContent = `R$ ${salesValue.toFixed(2).replace('.', ',')}`;
+      });
+    });
+  </script>
+</body>
+</html>

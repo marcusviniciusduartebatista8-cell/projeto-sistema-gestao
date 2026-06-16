@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Gestão de Pedidos</title>
+
+  <style>
+    body{
+      font-family:Arial,sans-serif;
+      background:#f4f4f4;
+      margin:0;
+      padding:20px;
+    }
+
+    header{
+      background:#222;
+      color:white;
+      padding:20px;
+      border-radius:10px;
+    }
+
+    .card{
+      background:white;
+      padding:20px;
+      margin-top:20px;
+      border-radius:10px;
+      box-shadow:0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+    }
+
+    th,td{
+      padding:10px;
+      border:1px solid #ddd;
+    }
+
+    th{
+      background:#eee;
+    }
+
+    button{
+      background:green;
+      color:white;
+      border:none;
+      padding:10px;
+      border-radius:5px;
+      cursor:pointer;
+    }
+
+    footer{
+      margin-top:30px;
+      text-align:center;
+    }
+  </style>
+
+</head>
+<body>
+
+  <header>
+    <h1>SGP - Sistema de Gestão de Pedidos</h1>
+    <p>Projeto Integrador - Técnico em Desenvolvimento de Sistemas</p>
+  </header>
+
+  <div class="card">
+    <h2>Produtos</h2>
+
+    <ul>
+      <li>Hambúrguer - R$ 18,50 <button>Adicionar</button></li>
+      <li>Pizza - R$ 45,00 <button>Adicionar</button></li>
+      <li>Refrigerante - R$ 7,50 <button>Adicionar</button></li>
+      <li>Batata Frita - R$ 15,00 <button>Adicionar</button></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Pedidos Recentes</h2>
+
+    <table>
+      <tr>
+        <th>Pedido</th>
+        <th>Cliente</th>
+        <th>Status</th>
+        <th>Total</th>
+      </tr>
+
+      <tr>
+        <td>101</td>
+        <td>João</td>
+        <td>Em preparação</td>
+        <td>R$ 52,00</td>
+      </tr>
+
+      <tr>
+        <td>102</td>
+        <td>Maria</td>
+        <td>Concluído</td>
+        <td>R$ 25,50</td>
+      </tr>
+
+      <tr>
+        <td>103</td>
+        <td>Carlos</td>
+        <td>Pendente</td>
+        <td>R$ 73,00</td>
+      </tr>
+
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Resumo</h2>
+    <p>Pedidos Hoje: 48</p>
+    <p>Vendas: R$ 2.540</p>
+    <p>Clientes: 32</p>
+  </div>
+
+  <footer>
+    <p>Projeto desenvolvido por Marcus Vinicius Duarte Batista</p>
+  </footer>
+
+</body>
+</html>
