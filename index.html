@@ -1,251 +1,372 @@
-<!DOCTYPE html>
+ DOCTYPE<!html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Gestão de Pedidos</title>
+  <title>Sistema de Gestão de Pedidos Pro</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-      color: #333;
+    *{box-sizing:border-box}
+    :root{
+      --primary:#2563eb;--primary-dark:#1d4ed8;--success:#16a34a;
+      --warning:#f59e0b;--danger:#dc2626;--dark:#0f172a;
+      --muted:#64748b;--bg:#eef2f7;--card:#fff;--border:#e2e8f0;
     }
-
-    header {
-      background: #222;
-      color: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    }
-
-    header h1 {
-      margin: 0 0 8px;
-      font-size: 2rem;
-    }
-
-    header p {
-      margin: 0;
-      opacity: 0.85;
-    }
-
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .card {
-      background: white;
-      padding: 20px;
-      margin-top: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
-    }
-
-    .card h2 {
-      margin-top: 0;
-      color: #222;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    li {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    li:last-child {
-      border-bottom: none;
-    }
-
-    .product-name {
-      font-weight: 600;
-    }
-
-    .price {
-      color: #666;
-      margin-left: 8px;
-    }
-
-    button {
-      background: #28a745;
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    button:hover {
-      background: #218838;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      padding: 14px 12px;
-      border: 1px solid #ddd;
-      text-align: left;
-    }
-
-    th {
-      background: #f0f0f0;
-    }
-
-    tfoot td {
-      font-weight: 700;
-    }
-
-    .summary-list {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .summary-list li {
-      margin-bottom: 8px;
-    }
-
-    footer {
-      margin-top: 30px;
-      text-align: center;
-      color: #555;
-      font-size: 0.95rem;
-    }
+    body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#eef2ff,#f8fafc);
+      margin:0;color:#1e293b}
+    .container{max-width:1400px;margin:auto;padding:22px}
+    header{background:linear-gradient(135deg,#0f172a,#1e40af);color:#fff;padding:28px;
+      border-radius:18px;box-shadow:0 15px 35px rgba(15,23,42,.18);margin-bottom:22px;
+      position:relative;overflow:hidden}
+    header:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;
+      background:rgba(255,255,255,.06);right:-70px;top:-100px}
+    header h1{margin:0 0 8px;font-size:2.35rem}
+    header p{margin:0;opacity:.88}
+    .topbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .topbar button{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2)}
+    .dashboard-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:22px}
+    .indicator-card,.card{background:rgba(255,255,255,.96);border:1px solid var(--border);
+      border-radius:16px;box-shadow:0 7px 20px rgba(15,23,42,.07)}
+    .indicator-card{padding:20px;border-top:4px solid var(--primary)}
+    .indicator-card.green{border-top-color:var(--success)}
+    .indicator-card.orange{border-top-color:var(--warning)}
+    .indicator-card.red{border-top-color:var(--danger)}
+    .indicator-card h3{margin:0 0 8px;font-size:.78rem;color:var(--muted);text-transform:uppercase}
+    .indicator-card .value{font-size:1.65rem;font-weight:800;margin:0}
+    .card{padding:22px;margin-bottom:22px}
+    .card h2{margin:0 0 16px;color:var(--dark);font-size:1.35rem;border-bottom:2px solid #f1f5f9;padding-bottom:10px}
+    .form-group{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+    input,select{padding:12px;border-radius:10px;border:1px solid #cbd5e1;font-size:1rem;
+      background:#fff;min-width:160px}
+    input:focus,select:focus{outline:3px solid rgba(37,99,235,.12);border-color:var(--primary)}
+    button{background:var(--primary);color:#fff;border:0;padding:11px 17px;border-radius:10px;
+      cursor:pointer;font-weight:700;transition:.2s;box-shadow:0 3px 8px rgba(37,99,235,.15)}
+    button:hover{transform:translateY(-1px);background:var(--primary-dark)}
+    .btn-success{background:var(--success)} .btn-danger{background:var(--danger)}
+    .btn-warning{background:var(--warning);color:#111827}.btn-secondary{background:#475569}
+    .btn-block{width:100%}
+    .products-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+    .product-card{background:#fff;border:1px solid var(--border);border-radius:15px;overflow:hidden;
+      display:flex;flex-direction:column;box-shadow:0 4px 12px rgba(0,0,0,.04);transition:.2s}
+    .product-card:hover{transform:translateY(-5px);box-shadow:0 12px 25px rgba(15,23,42,.12)}
+    .product-image{width:100%;height:155px;object-fit:cover;background:#e2e8f0}
+    .product-details{padding:15px;display:flex;flex-direction:column;gap:9px}
+    .product-name{font-weight:800;font-size:1.05rem;margin:0}.price{color:var(--success);font-weight:800;margin:0}
+    .product-tag{font-size:.75rem;color:#475569;background:#f1f5f9;padding:4px 8px;border-radius:20px;width:max-content}
+    .filter-buttons{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+    .filter-btn{background:#e2e8f0;color:#475569;box-shadow:none;padding:7px 13px}
+    .filter-btn.active{background:#475569;color:#fff}
+    .table-wrap{overflow:auto} table{width:100%;border-collapse:collapse;min-width:700px}
+    th,td{padding:13px 12px;border-bottom:1px solid var(--border);text-align:left}
+    th{background:#f8fafc;color:var(--muted);font-size:.85rem}
+    tr:hover td{background:#f8fafc}
+    .badge{padding:5px 9px;border-radius:20px;font-size:.78rem;font-weight:800}
+    .status-preparacao{background:#fef3c7;color:#b45309}.status-concluido{background:#dcfce7;color:#15803d}
+    .status-pendente{background:#fee2e2;color:#b91c1c}.status-recebido{background:#e0f2fe;color:#0369a1}
+    .two-col{display:grid;grid-template-columns:1.3fr .7fr;gap:22px}
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .mini-stat{padding:16px;border-radius:12px;background:#f8fafc;border:1px solid var(--border)}
+    .mini-stat strong{display:block;font-size:1.35rem;margin-top:5px}
+    .progress{height:16px;background:#e2e8f0;border-radius:20px;overflow:hidden}
+    .progress-bar{height:100%;width:80%;background:linear-gradient(90deg,#2563eb,#16a34a);transition:width .4s}
+    .chart{display:flex;align-items:flex-end;gap:12px;height:190px;padding:15px 8px 0}
+    .bar{flex:1;background:linear-gradient(180deg,#60a5fa,#2563eb);border-radius:7px 7px 0 0;
+      min-width:22px;position:relative}.bar span{position:absolute;top:-22px;width:100%;text-align:center;font-size:.72rem}
+    .bar small{position:absolute;bottom:-22px;width:100%;text-align:center;color:#64748b}
+    .activity{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+    .dot{width:11px;height:11px;border-radius:50%;background:var(--success);margin-top:6px}
+    .activity p{margin:0}.activity small{color:var(--muted)}
+    .empty{padding:25px;text-align:center;color:var(--muted)}
+    .toast{position:fixed;right:22px;bottom:22px;background:#0f172a;color:#fff;padding:14px 18px;
+      border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:.3s;z-index:10}
+    .toast.show{opacity:1}
+    footer{margin:35px 0 10px;text-align:center;color:#64748b}
+    @media(max-width:1100px){.dashboard-grid{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:800px){.two-col{grid-template-columns:1fr}.stats-row{grid-template-columns:1fr}
+      .dashboard-grid{grid-template-columns:repeat(2,1fr)}header h1{font-size:1.8rem}}
+    @media(max-width:520px){.container{padding:12px}.dashboard-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
+
   <div class="container">
     <header>
-      <h1>SGP - Sistema de Gestão de Pedidos</h1>
-      <p>Projeto Integrador - Técnico em Desenvolvimento de Sistemas</p>
+      <h1>🚀 SGP — Sistema de Gestão de Pedidos Pro</h1>
+      <p>Projeto Integrador • Técnico em Desenvolvimento de Sistemas • Edição Final 2026</p>
+      <div class="topbar">
+        <button onclick="rolar('produtos')">🍔 Cardápio</button>
+        <button onclick="rolar('pedidos')">📦 Pedidos</button>
+        <button onclick="rolar('relatorios')">📊 Relatórios</button>
+        <button onclick="alternarTema()">🌙 Tema</button>
+      </div>
     </header>
 
-    <div class="card">
-      <h2>Produtos</h2>
-      <ul>
-        <li>
-          <div>
-            <span class="product-name">Hambúrguer</span>
-            <span class="price">R$ 18,50</span>
-          </div>
-          <button data-name="Hambúrguer" data-price="18.5">Adicionar</button>
-        </li>
-        <li>
-          <div>
-            <span class="product-name">Pizza</span>
-            <span class="price">R$ 45,00</span>
-          </div>
-          <button data-name="Pizza" data-price="45">Adicionar</button>
-        </li>
-        <li>
-          <div>
-            <span class="product-name">Refrigerante</span>
-            <span class="price">R$ 7,50</span>
-          </div>
-          <button data-name="Refrigerante" data-price="7.5">Adicionar</button>
-        </li>
-        <li>
-          <div>
-            <span class="product-name">Batata Frita</span>
-            <span class="price">R$ 15,00</span>
-          </div>
-          <button data-name="Batata Frita" data-price="15">Adicionar</button>
-        </li>
-      </ul>
+    <div class="dashboard-grid">
+      <div class="indicator-card"><h3>💰 Faturamento Hoje</h3><p class="value" id="dash-sales">R$ 2.540,00</p></div>
+      <div class="indicator-card green"><h3>🛒 Pedidos</h3><p class="value" id="dash-orders">48</p></div>
+      <div class="indicator-card orange"><h3>👥 Clientes</h3><p class="value" id="dash-clients">32</p></div>
+      <div class="indicator-card red"><h3>⏳ Pendentes</h3><p class="value" id="dash-pending">1</p></div>
+      <div class="indicator-card"><h3>⭐ Avaliação</h3><p class="value">4,9/5</p></div>
     </div>
 
     <div class="card">
-      <h2>Pedidos Recentes</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Pedido</th>
-            <th>Cliente</th>
-            <th>Status</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody id="order-table-body">
-          <tr>
-            <td>101</td>
-            <td>João</td>
-            <td>Em preparação</td>
-            <td>R$ 52,00</td>
-          </tr>
-          <tr>
-            <td>102</td>
-            <td>Maria</td>
-            <td>Concluído</td>
-            <td>R$ 25,50</td>
-          </tr>
-          <tr>
-            <td>103</td>
-            <td>Carlos</td>
-            <td>Pendente</td>
-            <td>R$ 73,00</td>
-          </tr>
-        </tbody>
-      </table>
+      <h2>🖥️ Painel Administrativo</h2>
+      <p><strong>Status:</strong> <span id="statusSistema">🟢 Online</span> &nbsp;|&nbsp; <strong>Horário:</strong> <span id="dataHora"></span></p>
+      <p><strong>Versão:</strong> 3.0.0 Final Pro &nbsp;|&nbsp; <strong>Última atualização:</strong> 11/08/2026</p>
+      <button class="btn-success" onclick="gerarRelatorio()">📄 Gerar Relatório</button>
+      <button class="btn-secondary" onclick="exportarCSV()">⬇️ Exportar Pedidos CSV</button>
+      <button class="btn-warning" onclick="mostrarResumo()">📈 Ver Resumo</button>
     </div>
 
     <div class="card">
-      <h2>Resumo</h2>
-      <ul class="summary-list">
-        <li>Pedidos Hoje: <strong id="total-orders">48</strong></li>
-        <li>Vendas: <strong id="sales-value">R$ 2.540</strong></li>
-        <li>Clientes: <strong id="clients-count">32</strong></li>
-      </ul>
+      <h2>➕ Cadastrar Novo Produto</h2>
+      <div class="form-group">
+        <input type="text" id="new-product-name" placeholder="Nome do produto">
+        <input type="number" id="new-product-price" placeholder="Preço R$" step="0.01">
+        <input type="text" id="new-product-img" placeholder="Link da imagem (opcional)">
+        <select id="new-product-category">
+          <option>Hambúrgueres</option><option>Pizzas</option><option>Bebidas</option>
+          <option>Porções</option><option>Combos</option><option>Sobremesas</option>
+        </select>
+        <button onclick="cadastrarProduto()">Salvar Produto</button>
+      </div>
+    </div>
+
+    <div class="card" id="produtos">
+      <h2>🔎 Cardápio Digital</h2>
+      <input type="text" id="search" placeholder="Pesquisar produto...">
+      <div class="filter-buttons" style="margin-top:12px">
+        <button class="filter-btn active" onclick="filtrarProdutos('Todos',this)">Todos</button>
+        <button class="filter-btn" onclick="filtrarProdutos('Hambúrgueres',this)">🍔 Hambúrgueres</button>
+        <button class="filter-btn" onclick="filtrarProdutos('Pizzas',this)">🍕 Pizzas</button>
+        <button class="filter-btn" onclick="filtrarProdutos('Bebidas',this)">🥤 Bebidas</button>
+        <button class="filter-btn" onclick="filtrarProdutos('Porções',this)">🍟 Porções</button>
+        <button class="filter-btn" onclick="filtrarProdutos('Combos',this)">🔥 Combos</button>
+        <button class="filter-btn" onclick="filtrarProdutos('Sobremesas',this)">🍰 Sobremesas</button>
+      </div>
+      <div class="products-grid" id="products-list"></div>
+    </div>
+
+    <div class="two-col">
+      <div class="card" id="pedidos">
+        <h2>📦 Controle de Pedidos</h2>
+        <div class="filter-buttons">
+          <button class="filter-btn active" onclick="filtrarTabela('todos',this)">Todos</button>
+          <button class="filter-btn" onclick="filtrarTabela('Recebido',this)">Novos</button>
+          <button class="filter-btn" onclick="filtrarTabela('Em preparação',this)">Preparação</button>
+          <button class="filter-btn" onclick="filtrarTabela('Concluído',this)">Concluídos</button>
+          <button class="filter-btn" onclick="filtrarTabela('Pendente',this)">Pendentes</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Pedido</th><th>Cliente</th><th>Data</th><th>Status</th><th>Total</th><th>Ação</th></tr></thead>
+            <tbody id="order-table-body">
+              <tr data-status="Em preparação"><td>101</td><td>João</td><td>Hoje</td><td><span class="badge status-preparacao">Em preparação</span></td><td>R$ 52,00</td><td><button onclick="concluirPedido(this)">Concluir</button></td></tr>
+              <tr data-status="Concluído"><td>102</td><td>Maria</td><td>Hoje</td><td><span class="badge status-concluido">Concluído</span></td><td>R$ 25,50</td><td>✅</td></tr>
+              <tr data-status="Pendente"><td>103</td><td>Carlos</td><td>Hoje</td><td><span class="badge status-pendente">Pendente</span></td><td>R$ 73,00</td><td><button onclick="receberPedido(this)">Receber</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn-danger" style="margin-top:16px" onclick="limparPedidos()">🗑️ Limpar Pedidos</button>
+      </div>
+
+      <div class="card">
+        <h2>🧾 Novo Pedido Rápido</h2>
+        <div class="form-group"><input id="clienteRapido" placeholder="Nome do cliente"></div>
+        <div class="form-group">
+          <select id="produtoRapido"></select>
+          <input id="qtdRapida" type="number" value="1" min="1" style="max-width:100px">
+        </div>
+        <button class="btn-success btn-block" onclick="criarPedidoRapido()">➕ Criar Pedido</button>
+        <hr style="border:0;border-top:1px solid #e2e8f0;margin:20px 0">
+        <p><strong>Total do pedido:</strong></p>
+        <p id="totalRapido" style="font-size:1.8rem;font-weight:800;color:#16a34a">R$ 0,00</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🎯 Meta de Pedidos</h2>
+      <div class="progress"><div class="progress-bar" id="metaBar"></div></div>
+      <p id="metaTexto">48 de 60 pedidos realizados — 80% da meta.</p>
+    </div>
+
+    <div class="two-col" id="relatorios">
+      <div class="card">
+        <h2>📊 Relatório de Vendas</h2>
+        <div class="chart">
+          <div class="bar" style="height:55%"><span>32</span><small>Seg</small></div>
+          <div class="bar" style="height:72%"><span>41</span><small>Ter</small></div>
+          <div class="bar" style="height:65%"><span>37</span><small>Qua</small></div>
+          <div class="bar" style="height:88%"><span>52</span><small>Qui</small></div>
+          <div class="bar" style="height:78%"><span>46</span><small>Sex</small></div>
+          <div class="bar" style="height:96%"><span>58</span><small>Sáb</small></div>
+          <div class="bar" style="height:80%"><span>48</span><small>Hoje</small></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>⚡ Atividade Recente</h2>
+        <div id="activities">
+          <div class="activity"><div class="dot"></div><div><p><strong>Pedido #103</strong> aguardando pagamento.</p><small>há 5 minutos</small></div></div>
+          <div class="activity"><div class="dot"></div><div><p><strong>Produto cadastrado:</strong> Batata Frita.</p><small>há 18 minutos</small></div></div>
+          <div class="activity"><div class="dot"></div><div><p><strong>Pedido #102</strong> concluído.</p><small>há 32 minutos</small></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>⭐ Avaliações dos Clientes</h2>
+      <div class="stats-row">
+        <div class="mini-stat">Nota média<strong>4,9 ⭐</strong></div>
+        <div class="mini-stat">Avaliações<strong>128</strong></div>
+        <div class="mini-stat">Recomendariam<strong>96%</strong></div>
+      </div>
+      <p>⭐⭐⭐⭐⭐ <strong>João:</strong> Excelente atendimento e sistema muito rápido!</p>
+      <p>⭐⭐⭐⭐⭐ <strong>Maria:</strong> Pedido organizado e entrega rápida.</p>
+      <p>⭐⭐⭐⭐⭐ <strong>Carlos:</strong> Muito fácil de usar.</p>
     </div>
 
     <footer>
-      <p>Projeto desenvolvido por Marcus Vinicius Duarte Batista</p>
+      <p>🏆 <strong>Projeto Integrador — SGP Final Pro</strong></p>
+      <p>Desenvolvido por Marcus Vinicius Duarte Batista • Sistema demonstrativo acadêmico</p>
     </footer>
   </div>
-
+  <div class="toast" id="toast"></div>
   <script>
-    const buttons = document.querySelectorAll('button[data-name]');
-    const totalOrdersEl = document.getElementById('total-orders');
-    const salesValueEl = document.getElementById('sales-value');
-    let totalOrders = 48;
-    let salesValue = 2540.00;
-    let nextOrderId = 104;
-    const orderTableBody = document.getElementById('order-table-body');
+    const produtos = [
+      {id:1,nome:"Hambúrguer",preco:18.50,img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500",cat:"Hambúrgueres"},
+      {id:2,nome:"Pizza",preco:45.00,img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",cat:"Pizzas"},
+      {id:3,nome:"Refrigerante",preco:7.50,img:"https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500",cat:"Bebidas"},
+      {id:4,nome:"Batata Frita",preco:15.00,img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500",cat:"Porções"},
+      {id:5,nome:"Combo SGP",preco:39.90,img:"https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",cat:"Combos"},
+      {id:6,nome:"Milkshake",preco:16.90,img:"https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500",cat:"Sobremesas"}
+    ];
 
-    buttons.forEach(button => {
-      button.addEventListener('click', () => {
-        const name = button.dataset.name;
-        const price = parseFloat(button.dataset.price);
-        totalOrders += 1;
-        salesValue += price;
+    let categoriaAtual="Todos", totalOrders=48, salesValue=2540, nextOrderId=104, clientes=32;
 
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${nextOrderId}</td>
-          <td>Cliente novo</td>
-          <td>Recebido</td>
-          <td>R$ ${price.toFixed(2).replace('.', ',')}</td>
-        `;
-        orderTableBody.appendChild(row);
-        nextOrderId += 1;
+    const money = v => "R$ " + Number(v).toFixed(2).replace(".",",");
+    function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500)}
+    function rolar(id){document.getElementById(id).scrollIntoView({behavior:"smooth"})}
 
-        totalOrdersEl.textContent = totalOrders;
-        salesValueEl.textContent = `R$ ${salesValue.toFixed(2).replace('.', ',')}`;
+    function renderProdutos(){
+      const lista=document.getElementById("products-list"), busca=document.getElementById("search").value.toLowerCase();
+      lista.innerHTML="";
+      const filtrados=produtos.filter(p=>(categoriaAtual==="Todos"||p.cat===categoriaAtual)&&p.nome.toLowerCase().includes(busca));
+      if(!filtrados.length){lista.innerHTML='<div class="empty">Nenhum produto encontrado.</div>';return}
+      filtrados.forEach(p=>{
+        const div=document.createElement("div");div.className="product-card";
+        div.innerHTML=`<img class="product-image" src="${p.img}" alt="${p.nome}" onerror="this.src='https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=500'">
+          <div class="product-details"><span class="product-tag">${p.cat}</span><p class="product-name">${p.nome}</p>
+          <p class="price">${money(p.preco)}</p><button class="btn-block" onclick="adicionarProduto(${p.id})">🛒 Adicionar ao pedido</button></div>`;
+        lista.appendChild(div);
       });
-    });
+      atualizarSelect();
+    }
+
+    function atualizarSelect(){
+      const s=document.getElementById("produtoRapido");const atual=s.value;
+      s.innerHTML=produtos.map(p=>`<option value="${p.id}">${p.nome} — ${money(p.preco)}</option>`).join("");
+      if(atual)s.value=atual; atualizarTotalRapido();
+    }
+
+    function adicionarProduto(id){
+      const p=produtos.find(x=>x.id===id); criarPedido(p.nome,p.preco,"Cliente novo");
+    }
+
+    function criarPedidoRapido(){
+      const p=produtos.find(x=>x.id==document.getElementById("produtoRapido").value);
+      const cliente=document.getElementById("clienteRapido").value.trim()||"Cliente novo";
+      const qtd=Math.max(1,parseInt(document.getElementById("qtdRapida").value)||1);
+      criarPedido(p.nome,p.preco*qtd,cliente);
+      document.getElementById("clienteRapido").value="";
+    }
+
+    function criarPedido(produto,valor,cliente){
+      totalOrders++; salesValue+=valor; clientes++;
+      const tbody=document.getElementById("order-table-body"),tr=document.createElement("tr");
+      tr.dataset.status="Recebido";
+      tr.innerHTML=`<td>${nextOrderId}</td><td>${cliente}</td><td>Agora</td>
+        <td><span class="badge status-recebido">Recebido</span></td><td>${money(valor)}</td>
+        <td><button onclick="iniciarPedido(this)">Preparar</button></td>`;
+      tbody.appendChild(tr);nextOrderId++;
+      atualizarDashboard();toast("✅ Pedido criado com sucesso!");
+    }
+
+    function iniciarPedido(btn){
+      const tr=btn.closest("tr");tr.dataset.status="Em preparação";
+      tr.cells[3].innerHTML='<span class="badge status-preparacao">Em preparação</span>';
+      btn.textContent="Concluir";btn.onclick=()=>concluirPedido(btn);toast("👨‍🍳 Pedido enviado para preparação.");
+    }
+
+    function concluirPedido(btn){
+      const tr=btn.closest("tr");tr.dataset.status="Concluído";
+      tr.cells[3].innerHTML='<span class="badge status-concluido">Concluído</span>';btn.replaceWith(document.createTextNode("✅"));
+      atualizarDashboard();toast("🎉 Pedido concluído!");
+    }
+
+    function receberPedido(btn){iniciarPedido(btn)}
+
+    function atualizarDashboard(){
+      document.getElementById("dash-sales").textContent=money(salesValue);
+      document.getElementById("dash-orders").textContent=totalOrders;
+      document.getElementById("dash-clients").textContent=clientes;
+      const pend=[...document.querySelectorAll("#order-table-body tr")].filter(r=>r.dataset.status==="Pendente").length;
+      document.getElementById("dash-pending").textContent=pend;
+      const pct=Math.min(100,totalOrders/60*100);
+      document.getElementById("metaBar").style.width=pct+"%";
+      document.getElementById("metaTexto").textContent=`${totalOrders} de 60 pedidos realizados — ${Math.round(pct)}% da meta.`;
+    }
+
+    function filtrarTabela(status,botao){
+      document.querySelectorAll("#pedidos .filter-btn").forEach(b=>b.classList.remove("active"));botao.classList.add("active");
+      document.querySelectorAll("#order-table-body tr").forEach(r=>r.style.display=status==="todos"||r.dataset.status===status?"":"none");
+    }
+
+    function filtrarProdutos(cat,btn){
+      categoriaAtual=cat;document.querySelectorAll("#produtos .filter-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderProdutos();
+    }
+
+    function cadastrarProduto(){
+      const nome=document.getElementById("new-product-name").value.trim(), preco=parseFloat(document.getElementById("new-product-price").value);
+      let img=document.getElementById("new-product-img").value.trim();
+      const cat=document.getElementById("new-product-category").value;
+      if(!nome||isNaN(preco)||preco<=0){toast("⚠️ Informe nome e preço válidos.");return}
+      if(!img)img="https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=500";
+      produtos.push({id:Date.now(),nome,preco,img,cat});
+      document.getElementById("new-product-name").value="";document.getElementById("new-product-price").value="";document.getElementById("new-product-img").value="";
+      renderProdutos();toast(`✅ ${nome} cadastrado!`);
+    }
+
+    function atualizarTotalRapido(){
+      const p=produtos.find(x=>x.id==document.getElementById("produtoRapido").value),q=parseInt(document.getElementById("qtdRapida").value)||1;
+      document.getElementById("totalRapido").textContent=money(p?p.preco*q:0);
+    }
+
+    function gerarRelatorio(){
+      const texto=`RELATÓRIO SGP — ${new Date().toLocaleString("pt-BR")}\\n\\nPedidos: ${totalOrders}\\nFaturamento: ${money(salesValue)}\\nClientes: ${clientes}\\nMeta: ${Math.round(Math.min(100,totalOrders/60*100))}%\\nStatus: Sistema operacional`;
+      const blob=new Blob([texto],{type:"text/plain"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="relatorio-sgp.txt";a.click();URL.revokeObjectURL(a.href);toast("📄 Relatório gerado!");
+    }
+
+    function exportarCSV(){
+      const rows=[["Pedido","Cliente","Data","Status","Total"],...[...document.querySelectorAll("#order-table-body tr")].map(r=>[...r.cells].slice(0,5).map(c=>c.innerText.trim()))];
+      const csv=rows.map(r=>r.map(v=>`"${v.replaceAll('"','""')}"`).join(";")).join("\\n");
+      const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="pedidos-sgp.csv";a.click();toast("⬇️ CSV exportado!");
+    }
+
+    function mostrarResumo(){alert(`📊 RESUMO DO SGP\\n\\nPedidos: ${totalOrders}\\nFaturamento: ${money(salesValue)}\\nClientes: ${clientes}\\nProdutos: ${produtos.length}\\nAvaliação: 4,9/5`)}
+    function limparPedidos(){document.getElementById("order-table-body").innerHTML="";atualizarDashboard();toast("🗑️ Pedidos removidos do painel.")}
+
+    function alternarTema(){
+      const dark=document.body.dataset.dark==="1";
+      document.body.dataset.dark=dark?"0":"1";
+      document.body.style.background=dark?"linear-gradient(135deg,#eef2ff,#f8fafc)":"#0f172a";
+      document.body.style.color=dark?"#1e293b":"#e2e8f0";
+      toast(dark?"☀️ Tema claro ativado":"🌙 Tema escuro ativado");
+    }
+
+    function atualizarDataHora(){document.getElementById("dataHora").textContent=new Date().toLocaleString("pt-BR")}
+    document.getElementById("search").addEventListener("input",renderProdutos);
+    document.getElementById("qtdRapida").addEventListener("input",atualizarTotalRapido);
+    document.getElementById("produtoRapido").addEventListener("change",atualizarTotalRapido);
+    setInterval(atualizarDataHora,1000);atualizarDataHora();renderProdutos();atualizarDashboard();
   </script>
 </body>
-</html>
+</htm
