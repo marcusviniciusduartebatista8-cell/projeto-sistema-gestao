@@ -1,10 +1,10 @@
- DOCTYPE<!html>
+DOCTYPE<!html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Gestão de Pedidos Pro</title> 
-  <style> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <title>Sistema de Gestão de Pedidos Pro</title>
+  <style>
     *{box-sizing:border-box}
     :root{
       --primary:#2563eb;--primary-dark:#1d4ed8;--success:#16a34a;
@@ -84,6 +84,83 @@
     @media(max-width:800px){.two-col{grid-template-columns:1fr}.stats-row{grid-template-columns:1fr}
       .dashboard-grid{grid-template-columns:repeat(2,1fr)}header h1{font-size:1.8rem}}
     @media(max-width:520px){.container{padding:12px}.dashboard-grid{grid-template-columns:1fr}}
+
+    /* ===== MODO CELULAR / RESPONSIVO AVANÇADO ===== */
+    @media (max-width: 700px) {
+      body { overflow-x: hidden; }
+      .container { width:100%; max-width:100%; padding:10px; }
+      header { padding:20px 16px; border-radius:14px; margin-bottom:14px; }
+      header h1 { font-size:1.45rem; line-height:1.2; }
+      header p { font-size:.85rem; line-height:1.4; }
+      .topbar { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+      .topbar button { width:100%; min-height:44px; padding:10px 6px; font-size:.82rem; }
+      .dashboard-grid { grid-template-columns:1fr 1fr !important; gap:9px; margin-bottom:14px; }
+      .indicator-card { padding:14px 12px; border-radius:12px; }
+      .indicator-card h3 { font-size:.66rem; line-height:1.2; }
+      .indicator-card .value { font-size:1.25rem; word-break:break-word; }
+      .card { padding:15px 13px; margin-bottom:14px; border-radius:13px; }
+      .card h2 { font-size:1.08rem; line-height:1.3; margin-bottom:13px; }
+      .form-group { display:flex; flex-direction:column; gap:8px; }
+      input, select, .form-group input, .form-group select {
+        width:100%; min-width:0; min-height:46px; font-size:16px;
+      }
+      button { width:100%; min-height:44px; font-size:.9rem; }
+      .products-grid { grid-template-columns:1fr 1fr !important; gap:10px; }
+      .product-card { min-width:0; border-radius:12px; }
+      .product-image { height:125px; }
+      .product-details { padding:11px; gap:7px; }
+      .product-name { font-size:.94rem; line-height:1.2; }
+      .price { font-size:1rem; }
+      .product-tag { font-size:.65rem; }
+      .product-details button { font-size:.76rem; padding:9px 5px; min-height:40px; }
+      .filter-buttons { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+      .filter-btn { width:100%; font-size:.75rem; padding:9px 5px; min-height:40px; }
+      .table-wrap { overflow-x:auto; margin:0 -3px; border-radius:8px; }
+      table { min-width:620px; font-size:.78rem; }
+      th, td { padding:10px 8px; }
+      .two-col { grid-template-columns:1fr !important; gap:14px; }
+      .stats-row { grid-template-columns:1fr !important; gap:8px; }
+      .mini-stat { padding:13px; }
+      .mini-stat strong { font-size:1.2rem; }
+      .chart { height:160px; gap:7px; padding-left:2px; padding-right:2px; }
+      .bar span, .bar small { font-size:.65rem; }
+      .activity { gap:9px; font-size:.85rem; }
+      .toast { left:10px; right:10px; bottom:12px; text-align:center; font-size:.88rem; }
+      footer { font-size:.78rem; padding:0 10px; }
+    }
+
+    @media (max-width: 390px) {
+      .dashboard-grid { grid-template-columns:1fr !important; }
+      .products-grid { grid-template-columns:1fr !important; }
+      header h1 { font-size:1.3rem; }
+      .topbar { grid-template-columns:1fr; }
+      .indicator-card .value { font-size:1.45rem; }
+    }
+
+  
+    /* ===== RECURSOS NOTA 1000 ===== */
+    .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .kpi-sub{font-size:.78rem;color:var(--muted);margin-top:7px}
+    .insights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .insight{padding:18px;border:1px solid var(--border);background:#f8fafc;border-radius:14px}
+    .insight h3{margin:0 0 6px;font-size:1rem}.insight p{margin:0;color:var(--muted)}
+    .login-demo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .ai-box{background:linear-gradient(135deg,#eff6ff,#ecfeff);border:1px solid #bfdbfe;border-radius:14px;padding:17px}
+    .ai-answer{margin-top:12px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;min-height:58px}
+    .stock-low{color:#b91c1c;font-weight:800}.stock-ok{color:#15803d;font-weight:800}
+    .modal{position:fixed;inset:0;background:rgba(15,23,42,.62);display:none;align-items:center;justify-content:center;padding:18px;z-index:30}
+    .modal.open{display:flex}.modal-content{width:min(560px,100%);background:#fff;border-radius:18px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.3)}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.modal-head h2{margin:0}
+    .modal-close{width:auto;background:#e2e8f0;color:#334155;box-shadow:none}
+    body[data-dark="1"] .card,body[data-dark="1"] .indicator-card,body[data-dark="1"] .product-card,body[data-dark="1"] .modal-content{background:#111827;color:#e5e7eb;border-color:#334155}
+    body[data-dark="1"] .card h2,body[data-dark="1"] .product-name{color:#f8fafc}
+    body[data-dark="1"] input,body[data-dark="1"] select{background:#0f172a;color:#e5e7eb;border-color:#475569}
+    body[data-dark="1"] .mini-stat,body[data-dark="1"] .insight,body[data-dark="1"] th,body[data-dark="1"] tr:hover td{background:#172033;color:#e5e7eb}
+    body[data-dark="1"] .ai-box{background:#172554;border-color:#1d4ed8}
+    body[data-dark="1"] .ai-answer{background:#0f172a;border-color:#334155}
+    @media(max-width:800px){.insights-grid,.login-demo{grid-template-columns:1fr}}
+
   </style>
 </head>
 <body>
@@ -97,12 +174,14 @@
         <button onclick="rolar('pedidos')">📦 Pedidos</button>
         <button onclick="rolar('relatorios')">📊 Relatórios</button>
         <button onclick="alternarTema()">🌙 Tema</button>
+        <button onclick="abrirLogin()">🔐 Acesso</button>
+        <button onclick="rolar('ia')">🤖 IA</button>
       </div>
     </header>
 
     <div class="dashboard-grid">
-      <div class="indicator-card"><h3>💰 Faturamento Hoje</h3><p class="value" id="dash-sales">R$ 2.540,00</p></div>
-      <div class="indicator-card green"><h3>🛒 Pedidos</h3><p class="value" id="dash-orders">48</p></div>
+      <div class="indicator-card"><h3>💰 Faturamento Hoje</h3><p class="value" id="dash-sales">R$ 2.540,00</p><div class="kpi-sub">↑ 12% comparado a ontem</div></div>
+      <div class="indicator-card green"><h3>🛒 Pedidos</h3><p class="value" id="dash-orders">48</p><div class="kpi-sub">Ticket médio: <span id="ticketMedio">R$ 52,92</span></div></div>
       <div class="indicator-card orange"><h3>👥 Clientes</h3><p class="value" id="dash-clients">32</p></div>
       <div class="indicator-card red"><h3>⏳ Pendentes</h3><p class="value" id="dash-pending">1</p></div>
       <div class="indicator-card"><h3>⭐ Avaliação</h3><p class="value">4,9/5</p></div>
@@ -118,11 +197,21 @@
     </div>
 
     <div class="card">
+      <div class="section-title"><h2>📌 Indicadores Inteligentes</h2><button class="btn-secondary" onclick="atualizarInsights()">Atualizar análise</button></div>
+      <div class="insights-grid">
+        <div class="insight"><h3>🔥 Produto destaque</h3><p id="produtoDestaque">Combo SGP possui alto potencial de venda.</p></div>
+        <div class="insight"><h3>⏱️ Tempo médio</h3><p>18 min por pedido — dentro da meta de 25 min.</p></div>
+        <div class="insight"><h3>📦 Estoque</h3><p id="estoqueAviso"><span class="stock-low">Atenção:</span> 2 itens próximos do estoque mínimo.</p></div>
+      </div>
+    </div>
+
+    <div class="card">
       <h2>➕ Cadastrar Novo Produto</h2>
       <div class="form-group">
         <input type="text" id="new-product-name" placeholder="Nome do produto">
         <input type="number" id="new-product-price" placeholder="Preço R$" step="0.01">
         <input type="text" id="new-product-img" placeholder="Link da imagem (opcional)">
+        <input type="number" id="new-product-stock" placeholder="Estoque" min="0" value="20">
         <select id="new-product-category">
           <option>Hambúrgueres</option><option>Pizzas</option><option>Bebidas</option>
           <option>Porções</option><option>Combos</option><option>Sobremesas</option>
@@ -212,6 +301,23 @@
       </div>
     </div>
 
+    <div class="card" id="ia">
+      <h2>🤖 Assistente Inteligente do SGP</h2>
+      <div class="ai-box">
+        <p><strong>IA demonstrativa:</strong> analisa os dados atuais do sistema e sugere ações de gestão.</p>
+        <div class="form-group">
+          <select id="perguntaIA">
+            <option value="vendas">Como melhorar as vendas?</option>
+            <option value="estoque">O que devo verificar no estoque?</option>
+            <option value="pedidos">Como melhorar os pedidos?</option>
+            <option value="resumo">Faça um resumo do negócio</option>
+          </select>
+          <button onclick="consultarIA()">✨ Analisar</button>
+        </div>
+        <div class="ai-answer" id="respostaIA">Selecione uma análise e clique em “Analisar”.</div>
+      </div>
+    </div>
+
     <div class="card">
       <h2>⭐ Avaliações dos Clientes</h2>
       <div class="stats-row">
@@ -229,15 +335,26 @@
       <p>Desenvolvido por Marcus Vinicius Duarte Batista • Sistema demonstrativo acadêmico</p>
     </footer>
   </div>
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <div class="modal-head"><h2>🔐 Acesso ao Sistema</h2><button class="modal-close" onclick="fecharLogin()">✕</button></div>
+      <p>Simulação de controle de acesso por perfil.</p>
+      <div class="login-demo">
+        <input id="loginNome" placeholder="Usuário" value="admin">
+        <select id="loginPerfil"><option>Administrador</option><option>Atendente</option><option>Gerente</option></select>
+      </div>
+      <button class="btn-success btn-block" style="margin-top:14px" onclick="entrarSistema()">Entrar</button>
+    </div>
+  </div>
   <div class="toast" id="toast"></div>
   <script>
     const produtos = [
-      {id:1,nome:"Hambúrguer",preco:18.50,img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500",cat:"Hambúrgueres"},
-      {id:2,nome:"Pizza",preco:45.00,img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",cat:"Pizzas"},
-      {id:3,nome:"Refrigerante",preco:7.50,img:"https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500",cat:"Bebidas"},
-      {id:4,nome:"Batata Frita",preco:15.00,img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500",cat:"Porções"},
-      {id:5,nome:"Combo SGP",preco:39.90,img:"https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",cat:"Combos"},
-      {id:6,nome:"Milkshake",preco:16.90,img:"https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500",cat:"Sobremesas"}
+      {id:1,nome:"Hambúrguer",preco:18.50,img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500",cat:"Hambúrgueres",estoque:24},
+      {id:2,nome:"Pizza",preco:45.00,img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",cat:"Pizzas",estoque:15},
+      {id:3,nome:"Refrigerante",preco:7.50,img:"https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500",cat:"Bebidas",estoque:40},
+      {id:4,nome:"Batata Frita",preco:15.00,img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500",cat:"Porções",estoque:9},
+      {id:5,nome:"Combo SGP",preco:39.90,img:"https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",cat:"Combos",estoque:7},
+      {id:6,nome:"Milkshake",preco:16.90,img:"https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500",cat:"Sobremesas",estoque:12}
     ];
 
     let categoriaAtual="Todos", totalOrders=48, salesValue=2540, nextOrderId=104, clientes=32;
@@ -255,7 +372,7 @@
         const div=document.createElement("div");div.className="product-card";
         div.innerHTML=`<img class="product-image" src="${p.img}" alt="${p.nome}" onerror="this.src='https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=500'">
           <div class="product-details"><span class="product-tag">${p.cat}</span><p class="product-name">${p.nome}</p>
-          <p class="price">${money(p.preco)}</p><button class="btn-block" onclick="adicionarProduto(${p.id})">🛒 Adicionar ao pedido</button></div>`;
+          <p class="price">${money(p.preco)}</p><small class="${p.estoque<=8?'stock-low':'stock-ok'}">Estoque: ${p.estoque}</small><button class="btn-block" onclick="adicionarProduto(${p.id})">🛒 Adicionar ao pedido</button></div>`;
         lista.appendChild(div);
       });
       atualizarSelect();
@@ -273,9 +390,11 @@
 
     function criarPedidoRapido(){
       const p=produtos.find(x=>x.id==document.getElementById("produtoRapido").value);
+      if(!p||p.estoque<=0){toast("⚠️ Produto sem estoque.");return}
       const cliente=document.getElementById("clienteRapido").value.trim()||"Cliente novo";
       const qtd=Math.max(1,parseInt(document.getElementById("qtdRapida").value)||1);
-      criarPedido(p.nome,p.preco*qtd,cliente);
+      if(qtd>p.estoque){toast("⚠️ Quantidade maior que o estoque disponível.");return}
+      p.estoque-=qtd; criarPedido(p.nome,p.preco*qtd,cliente); renderProdutos();
       document.getElementById("clienteRapido").value="";
     }
 
@@ -308,6 +427,7 @@
       document.getElementById("dash-sales").textContent=money(salesValue);
       document.getElementById("dash-orders").textContent=totalOrders;
       document.getElementById("dash-clients").textContent=clientes;
+      document.getElementById("ticketMedio").textContent=money(totalOrders?salesValue/totalOrders:0);
       const pend=[...document.querySelectorAll("#order-table-body tr")].filter(r=>r.dataset.status==="Pendente").length;
       document.getElementById("dash-pending").textContent=pend;
       const pct=Math.min(100,totalOrders/60*100);
@@ -328,10 +448,11 @@
       const nome=document.getElementById("new-product-name").value.trim(), preco=parseFloat(document.getElementById("new-product-price").value);
       let img=document.getElementById("new-product-img").value.trim();
       const cat=document.getElementById("new-product-category").value;
+      const estoque=Math.max(0,parseInt(document.getElementById("new-product-stock").value)||0);
       if(!nome||isNaN(preco)||preco<=0){toast("⚠️ Informe nome e preço válidos.");return}
       if(!img)img="https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=500";
-      produtos.push({id:Date.now(),nome,preco,img,cat});
-      document.getElementById("new-product-name").value="";document.getElementById("new-product-price").value="";document.getElementById("new-product-img").value="";
+      produtos.push({id:Date.now(),nome,preco,img,cat,estoque});
+      document.getElementById("new-product-name").value="";document.getElementById("new-product-price").value="";document.getElementById("new-product-img").value="";document.getElementById("new-product-stock").value="20";
       renderProdutos();toast(`✅ ${nome} cadastrado!`);
     }
 
@@ -359,14 +480,44 @@
       document.body.dataset.dark=dark?"0":"1";
       document.body.style.background=dark?"linear-gradient(135deg,#eef2ff,#f8fafc)":"#0f172a";
       document.body.style.color=dark?"#1e293b":"#e2e8f0";
-      toast(dark?"☀️ Tema claro ativado":"🌙 Tema escuro ativado");
+      localStorage.setItem("sgpTema",dark?"0":"1");toast(dark?"☀️ Tema claro ativado":"🌙 Tema escuro ativado");
+    }
+
+
+    function abrirLogin(){document.getElementById("loginModal").classList.add("open")}
+    function fecharLogin(){document.getElementById("loginModal").classList.remove("open")}
+    function entrarSistema(){
+      const nome=document.getElementById("loginNome").value.trim()||"Usuário";
+      const perfil=document.getElementById("loginPerfil").value;
+      fecharLogin();toast(`🔐 ${nome} entrou como ${perfil}.`);
+      document.getElementById("statusSistema").textContent=`🟢 Online — ${perfil}`;
+    }
+    function consultarIA(){
+      const tipo=document.getElementById("perguntaIA").value;
+      const pend=[...document.querySelectorAll("#order-table-body tr")].filter(r=>r.dataset.status==="Pendente").length;
+      const baixo=produtos.filter(p=>p.estoque<=8);
+      const respostas={
+        vendas:`Com ${totalOrders} pedidos e faturamento de ${money(salesValue)}, a melhor ação é destacar combos e produtos de maior ticket, além de criar promoções em horários de menor movimento.`,
+        estoque:baixo.length?`Existem ${baixo.length} itens com estoque baixo: ${baixo.map(p=>p.nome).join(", ")}. Recomendo reposição antes de novas promoções.`:`O estoque está saudável no momento. Continue acompanhando o nível mínimo dos produtos.`,
+        pedidos:pend?`Há ${pend} pedido(s) pendente(s). Priorize esses pedidos e acompanhe o tempo médio de preparação para evitar atrasos.`:`Não há pedidos pendentes neste momento. O fluxo está organizado.`,
+        resumo:`O SGP registra ${totalOrders} pedidos, ${clientes} clientes, ${produtos.length} produtos e ${money(salesValue)} de faturamento demonstrativo. O sistema apresenta bom desempenho operacional.`
+      };
+      document.getElementById("respostaIA").textContent=respostas[tipo];
+    }
+    function atualizarInsights(){
+      const baixo=produtos.filter(p=>p.estoque<=8);
+      document.getElementById("estoqueAviso").innerHTML=baixo.length?`<span class="stock-low">Atenção:</span> ${baixo.length} item(ns) no estoque mínimo: ${baixo.map(p=>p.nome).join(", ")}.`:`<span class="stock-ok">Estoque saudável:</span> nenhum produto no nível crítico.`;
+      toast("📌 Indicadores atualizados.");
+    }
+    function restaurarPreferencias(){
+      if(localStorage.getItem("sgpTema")==="1"){document.body.dataset.dark="1";document.body.style.background="#0f172a";document.body.style.color="#e2e8f0"}
     }
 
     function atualizarDataHora(){document.getElementById("dataHora").textContent=new Date().toLocaleString("pt-BR")}
     document.getElementById("search").addEventListener("input",renderProdutos);
     document.getElementById("qtdRapida").addEventListener("input",atualizarTotalRapido);
     document.getElementById("produtoRapido").addEventListener("change",atualizarTotalRapido);
-    setInterval(atualizarDataHora,1000);atualizarDataHora();renderProdutos();atualizarDashboard();
+    restaurarPreferencias();setInterval(atualizarDataHora,1000);atualizarDataHora();renderProdutos();atualizarDashboard();atualizarInsights();
   </script>
 </body>
-</htm
+</html>
