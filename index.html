@@ -1,5 +1,5 @@
-DOCTYPE<!html>
-<html lang="pt-BR">
+OCTYPE<!html>
+<htmDl lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
@@ -159,6 +159,27 @@ DOCTYPE<!html>
     body[data-dark="1"] .mini-stat,body[data-dark="1"] .insight,body[data-dark="1"] th,body[data-dark="1"] tr:hover td{background:#172033;color:#e5e7eb}
     body[data-dark="1"] .ai-box{background:#172554;border-color:#1d4ed8}
     body[data-dark="1"] .ai-answer{background:#0f172a;border-color:#334155}
+
+    /* ===== FORMULÁRIO FAZER PEDIDO — ATIVIDADE DO PROFESSOR ===== */
+    .pedido-form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .pedido-field{display:flex;flex-direction:column;gap:6px}
+    .pedido-field.full{grid-column:1/-1}
+    .pedido-field label{font-weight:700;font-size:.9rem;color:#334155}
+    .pedido-field label span{color:var(--danger)}
+    .pedido-field input,.pedido-field select,.pedido-field textarea{width:100%;min-width:0}
+    .pedido-field textarea{min-height:90px;resize:vertical;padding:12px;border-radius:10px;border:1px solid #cbd5e1;font:inherit}
+    .pedido-field small{color:var(--muted);font-size:.76rem}
+    .field-error{display:none;color:var(--danger);font-size:.78rem;font-weight:700}
+    .pedido-field.invalid input,.pedido-field.invalid select,.pedido-field.invalid textarea{border-color:var(--danger);outline:3px solid rgba(220,38,38,.10)}
+    .pedido-field.invalid .field-error{display:block}
+    .pedido-info{padding:14px 16px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;margin-bottom:15px}
+    .pedido-info strong{color:#1d4ed8}
+    .pedido-alert{display:none;padding:12px 14px;border-radius:10px;margin-top:12px;font-weight:700}
+    .pedido-alert.error{display:block;background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+    .pedido-alert.success{display:block;background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+    .cpf-ok{color:var(--success);font-weight:700}
+    @media(max-width:800px){.pedido-form{grid-template-columns:1fr}.pedido-field.full{grid-column:auto}}
+
     @media(max-width:800px){.insights-grid,.login-demo{grid-template-columns:1fr}}
 
   </style>
@@ -172,6 +193,7 @@ DOCTYPE<!html>
       <div class="topbar">
         <button onclick="rolar('produtos')">🍔 Cardápio</button>
         <button onclick="rolar('pedidos')">📦 Pedidos</button>
+        <button onclick="rolar('fazer-pedido')">🧾 Fazer Pedido</button>
         <button onclick="rolar('relatorios')">📊 Relatórios</button>
         <button onclick="alternarTema()">🌙 Tema</button>
         <button onclick="abrirLogin()">🔐 Acesso</button>
@@ -258,17 +280,74 @@ DOCTYPE<!html>
         <button class="btn-danger" style="margin-top:16px" onclick="limparPedidos()">🗑️ Limpar Pedidos</button>
       </div>
 
-      <div class="card">
-        <h2>🧾 Novo Pedido Rápido</h2>
-        <div class="form-group"><input id="clienteRapido" placeholder="Nome do cliente"></div>
-        <div class="form-group">
-          <select id="produtoRapido"></select>
-          <input id="qtdRapida" type="number" value="1" min="1" style="max-width:100px">
+      <div class="card" id="fazer-pedido">
+        <h2>🧾 Fazer Pedido</h2>
+        <div class="pedido-info">
+          <strong>🛡️ Validação do formulário:</strong> campos obrigatórios, CPF, telefone, e-mail, quantidade e nome sem números.
+          <br><br><strong>📍 Local do estabelecimento:</strong> Shopping Rio Poty — Teresina/PI
+          <br><small>O CPF abaixo é do cliente e é validado antes do envio do pedido.</small>
         </div>
-        <button class="btn-success btn-block" onclick="criarPedidoRapido()">➕ Criar Pedido</button>
-        <hr style="border:0;border-top:1px solid #e2e8f0;margin:20px 0">
-        <p><strong>Total do pedido:</strong></p>
-        <p id="totalRapido" style="font-size:1.8rem;font-weight:800;color:#16a34a">R$ 0,00</p>
+
+        <form id="pedidoForm" onsubmit="event.preventDefault(); criarPedidoCompleto();">
+          <div class="pedido-form">
+            <div class="pedido-field" id="fieldCliente">
+              <label for="clienteRapido">Nome completo <span>*</span></label>
+              <input id="clienteRapido" type="text" autocomplete="name" placeholder="Ex.: João da Silva" maxlength="80" pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" required>
+              <small>Somente letras e espaços. Não é permitido colocar números ou símbolos.</small>
+              <span class="field-error">Digite nome e sobrenome usando apenas letras.</span>
+            </div>
+
+            <div class="pedido-field" id="fieldCpf">
+              <label for="cpfCliente">CPF <span>*</span></label>
+              <input id="cpfCliente" type="text" inputmode="numeric" maxlength="14"
+                     placeholder="000.000.000-00" autocomplete="off" required>
+              <small>Digite um CPF válido.</small>
+              <span class="field-error">CPF inválido.</span>
+            </div>
+
+            <div class="pedido-field">
+              <label for="telefoneCliente">Telefone <span>*</span></label>
+              <input id="telefoneCliente" type="tel" inputmode="tel" maxlength="15"
+                     placeholder="(86) 99999-9999" required>
+              <small>Ex.: (86) 99999-9999.</small>
+            </div>
+
+            <div class="pedido-field">
+              <label for="produtoRapido">Produto <span>*</span></label>
+              <select id="produtoRapido" required></select>
+              <small>Selecione o produto desejado.</small>
+            </div>
+
+            <div class="pedido-field">
+              <label for="qtdRapida">Quantidade <span>*</span></label>
+              <input id="qtdRapida" type="number" value="1" min="1" max="999" required>
+              <small>Quantidade deve ser maior que zero.</small>
+            </div>
+
+            <div class="pedido-field">
+              <label for="emailCliente">E-mail</label>
+              <input id="emailCliente" type="email" autocomplete="email" placeholder="cliente@email.com">
+              <small>Opcional.</small>
+            </div>
+
+            <div class="pedido-field full">
+              <label for="observacoesPedido">Observações</label>
+              <textarea id="observacoesPedido" placeholder="Ex.: sem cebola, ponto da carne, observações da entrega..."></textarea>
+              <small>Campo opcional para detalhes do pedido.</small>
+            </div>
+
+            <div class="pedido-field full">
+              <p style="margin:0"><strong>Total do pedido:</strong></p>
+              <p id="totalRapido" style="font-size:1.8rem;font-weight:800;color:#16a34a;margin:0">R$ 0,00</p>
+            </div>
+
+            <div class="pedido-field full">
+              <button type="submit" class="btn-success btn-block">✅ Finalizar Pedido</button>
+            </div>
+          </div>
+
+          <div id="pedidoAlerta" class="pedido-alert" role="alert"></div>
+        </form>
       </div>
     </div>
 
@@ -388,14 +467,131 @@ DOCTYPE<!html>
       const p=produtos.find(x=>x.id===id); criarPedido(p.nome,p.preco,"Cliente novo");
     }
 
-    function criarPedidoRapido(){
-      const p=produtos.find(x=>x.id==document.getElementById("produtoRapido").value);
-      if(!p||p.estoque<=0){toast("⚠️ Produto sem estoque.");return}
-      const cliente=document.getElementById("clienteRapido").value.trim()||"Cliente novo";
-      const qtd=Math.max(1,parseInt(document.getElementById("qtdRapida").value)||1);
-      if(qtd>p.estoque){toast("⚠️ Quantidade maior que o estoque disponível.");return}
-      p.estoque-=qtd; criarPedido(p.nome,p.preco*qtd,cliente); renderProdutos();
-      document.getElementById("clienteRapido").value="";
+    function mostrarAlertaPedido(msg,tipo){
+      const box=document.getElementById("pedidoAlerta");
+      box.textContent=msg;
+      box.className="pedido-alert "+tipo;
+    }
+
+    function limparAlertaPedido(){
+      const box=document.getElementById("pedidoAlerta");
+      box.textContent="";
+      box.className="pedido-alert";
+    }
+
+    function validarCPF(cpf){
+      cpf=cpf.replace(/\D/g,"");
+      if(cpf.length!==11 || /^(\d)\1{10}$/.test(cpf)) return false;
+      let soma=0;
+      for(let i=0;i<9;i++) soma+=parseInt(cpf.charAt(i))*(10-i);
+      let resto=(soma*10)%11;
+      if(resto===10) resto=0;
+      if(resto!==parseInt(cpf.charAt(9))) return false;
+      soma=0;
+      for(let i=0;i<10;i++) soma+=parseInt(cpf.charAt(i))*(11-i);
+      resto=(soma*10)%11;
+      if(resto===10) resto=0;
+      return resto===parseInt(cpf.charAt(10));
+    }
+
+    function formatarCPF(input){
+      let v=input.value.replace(/\D/g,"").slice(0,11);
+      v=v.replace(/(\d{3})(\d)/,"$1.$2");
+      v=v.replace(/(\d{3})(\d)/,"$1.$2");
+      v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+      input.value=v;
+    }
+
+    function formatarTelefone(input){
+      let v=input.value.replace(/\D/g,"").slice(0,11);
+      if(v.length>10) v=v.replace(/^(\d{2})(\d{5})(\d{4}).*/,"($1) $2-$3");
+      else if(v.length>6) v=v.replace(/^(\d{2})(\d{4})(\d{0,4}).*/,"($1) $2-$3");
+      else if(v.length>2) v=v.replace(/^(\d{2})(\d+)/,"($1) $2");
+      else if(v.length) v="("+v;
+      input.value=v;
+    }
+
+    // Nome: permite apenas letras, espaços e acentos.
+    function formatarNome(input){
+      input.value=input.value.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ\s]/g,"").replace(/\s{2,}/g," ");
+    }
+
+    function validarNome(nome){
+      nome=nome.trim();
+      // Pelo menos nome e sobrenome, somente letras/acentos.
+      return nome.length>=3 &&
+             /^[A-Za-zÀ-ÖØ-öø-ÿ]+(?:\s+[A-Za-zÀ-ÖØ-öø-ÿ]+)+$/.test(nome);
+    }
+
+    function validarCampo(id,ok){
+      const el=document.getElementById(id);
+      if(!el) return;
+      const campo=el.closest(".pedido-field");
+      if(campo) campo.classList.toggle("invalid",!ok);
+    }
+
+    function criarPedidoCompleto(){
+      limparAlertaPedido();
+
+      const cliente=document.getElementById("clienteRapido").value.trim();
+      const cpf=document.getElementById("cpfCliente").value.trim();
+      const telefone=document.getElementById("telefoneCliente").value.trim();
+      const email=document.getElementById("emailCliente").value.trim();
+      const produtoId=document.getElementById("produtoRapido").value;
+      const qtd=parseInt(document.getElementById("qtdRapida").value,10);
+      const p=produtos.find(x=>x.id==produtoId);
+
+      const nomeOk=validarNome(cliente);
+      const cpfOk=validarCPF(cpf);
+      const telefoneOk=telefone.replace(/\D/g,"").length>=10;
+      const emailOk=!email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      const qtdOk=Number.isInteger(qtd) && qtd>=1;
+      const produtoOk=!!p;
+
+      validarCampo("clienteRapido",nomeOk);
+      validarCampo("cpfCliente",cpfOk);
+      validarCampo("telefoneCliente",telefoneOk);
+      validarCampo("emailCliente",emailOk);
+      validarCampo("qtdRapida",qtdOk);
+      validarCampo("produtoRapido",produtoOk);
+
+      if(!nomeOk || !cpfOk || !telefoneOk || !emailOk || !qtdOk || !produtoOk){
+        mostrarAlertaPedido("⚠️ Corrija os campos destacados antes de finalizar o pedido.","error");
+        toast("⚠️ Existem dados inválidos no pedido.");
+        return;
+      }
+
+      if(p.estoque<=0){
+        mostrarAlertaPedido("⚠️ Este produto está sem estoque.","error");
+        toast("⚠️ Produto sem estoque.");
+        return;
+      }
+
+      if(qtd>p.estoque){
+        validarCampo("qtdRapida",false);
+        mostrarAlertaPedido(`⚠️ Quantidade indisponível. Estoque atual: ${p.estoque}.`,"error");
+        toast("⚠️ Quantidade maior que o estoque disponível.");
+        return;
+      }
+
+      const valor=p.preco*qtd;
+      p.estoque-=qtd;
+      criarPedido(p.nome,valor,cliente);
+      renderProdutos();
+
+      const obs=document.getElementById("observacoesPedido").value.trim();
+      const atividades=document.getElementById("activities");
+      const item=document.createElement("div");
+      item.className="activity";
+      item.innerHTML=`<div class="dot"></div><div><p><strong>Pedido #${nextOrderId-1}</strong> criado para ${cliente}.</p><small>CPF: ${cpf} • Local: Shopping Rio Poty${obs?" • Com observações":""}</small></div>`;
+      atividades.prepend(item);
+
+      document.getElementById("pedidoForm").reset();
+      document.getElementById("qtdRapida").value=1;
+      atualizarSelect();
+      document.querySelectorAll(".pedido-field").forEach(c=>c.classList.remove("invalid"));
+      mostrarAlertaPedido(`✅ Pedido #${nextOrderId-1} realizado com sucesso! Total: ${money(valor)}.`,"success");
+      toast("✅ Pedido realizado com sucesso!");
     }
 
     function criarPedido(produto,valor,cliente){
@@ -517,6 +713,15 @@ DOCTYPE<!html>
     document.getElementById("search").addEventListener("input",renderProdutos);
     document.getElementById("qtdRapida").addEventListener("input",atualizarTotalRapido);
     document.getElementById("produtoRapido").addEventListener("change",atualizarTotalRapido);
+    document.getElementById("clienteRapido").addEventListener("input",function(){
+      formatarNome(this);
+      if(this.value.trim()) validarCampo("clienteRapido",validarNome(this.value));
+    });
+    document.getElementById("cpfCliente").addEventListener("input",function(){formatarCPF(this);});
+    document.getElementById("telefoneCliente").addEventListener("input",function(){formatarTelefone(this);});
+    document.getElementById("cpfCliente").addEventListener("blur",function(){
+      if(this.value.trim()) validarCampo("cpfCliente",validarCPF(this.value));
+    });
     restaurarPreferencias();setInterval(atualizarDataHora,1000);atualizarDataHora();renderProdutos();atualizarDashboard();atualizarInsights();
   </script>
 </body>
