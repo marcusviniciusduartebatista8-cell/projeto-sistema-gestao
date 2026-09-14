@@ -283,7 +283,9 @@ OCTYPE<!html>
       <div class="card" id="fazer-pedido">
         <h2>🧾 Fazer Pedido</h2>
         <div class="pedido-info">
-          <strong>🛡️ Validação do formulário:</strong> campos obrigatórios, CPF, telefone, e-mail, quantidade e nome sem números.
+          <strong>💾 Salvamento automático:</strong> os dados digitados ficam salvos neste navegador mesmo após atualizar ou fechar a página.
+            <br><small>Os dados são locais e não são enviados para um servidor.</small>
+            <br><br><strong>🛡️ Validação do formulário:</strong> campos obrigatórios, CPF, telefone, e-mail, quantidade e nome sem números.
           <br><br><strong>📍 Local do estabelecimento:</strong> Shopping Rio Poty — Teresina/PI
           <br><small>O CPF abaixo é do cliente e é validado antes do envio do pedido.</small>
         </div>
@@ -427,7 +429,7 @@ OCTYPE<!html>
   </div>
   <div class="toast" id="toast"></div>
   <script>
-    const produtos = [
+    const PRODUTOS_PADRAO = [
       {id:1,nome:"Hambúrguer",preco:18.50,img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500",cat:"Hambúrgueres",estoque:24},
       {id:2,nome:"Pizza",preco:45.00,img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",cat:"Pizzas",estoque:15},
       {id:3,nome:"Refrigerante",preco:7.50,img:"https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500",cat:"Bebidas",estoque:40},
@@ -436,7 +438,73 @@ OCTYPE<!html>
       {id:6,nome:"Milkshake",preco:16.90,img:"https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500",cat:"Sobremesas",estoque:12}
     ];
 
-    let categoriaAtual="Todos", totalOrders=48, salesValue=2540, nextOrderId=104, clientes=32;
+    /* ===== LOCALSTORAGE — PERSISTÊNCIA DOS DADOS =====
+       Os dados ficam salvos neste navegador/dispositivo. */
+    function carregarLocalStorage(chave,padrao){
+      try{
+        const valor=localStorage.getItem(chave);
+        return valor ? JSON.parse(valor) : JSON.parse(JSON.stringify(padrao));
+      }catch(e){ return JSON.parse(JSON.stringify(padrao)); }
+    }
+
+    let produtos=carregarLocalStorage("sgpProdutos",PRODUTOS_PADRAO);
+    let pedidosSalvos=carregarLocalStorage("sgpPedidos",[]);
+    let categoriaAtual="Todos";
+    let totalOrders=Number(localStorage.getItem("sgpTotalOrders"))||48;
+    let salesValue=Number(localStorage.getItem("sgpSalesValue"))||2540;
+    let nextOrderId=Number(localStorage.getItem("sgpNextOrderId"))||104;
+    let clientes=Number(localStorage.getItem("sgpClientes"))||32;
+
+    function salvarDados(){
+      localStorage.setItem("sgpProdutos",JSON.stringify(produtos));
+      localStorage.setItem("sgpPedidos",JSON.stringify(pedidosSalvos));
+      localStorage.setItem("sgpTotalOrders",String(totalOrders));
+      localStorage.setItem("sgpSalesValue",String(salesValue));
+      localStorage.setItem("sgpNextOrderId",String(nextOrderId));
+      localStorage.setItem("sgpClientes",String(clientes));
+    }
+
+    function salvarFormulario(){
+      const dados={};
+      ["clienteRapido","cpfCliente","telefoneCliente","emailCliente","produtoRapido","qtdRapida","observacoesPedido"].forEach(id=>{
+        const el=document.getElementById(id); if(el) dados[id]=el.value;
+      });
+      localStorage.setItem("sgpFormulario",JSON.stringify(dados));
+    }
+
+    function restaurarFormulario(){
+      const dados=carregarLocalStorage("sgpFormulario",{});
+      Object.entries(dados).forEach(([id,valor])=>{
+        const el=document.getElementById(id); if(el) el.value=valor;
+      });
+      atualizarTotalRapido();
+    }
+
+    function sincronizarPedidos(){
+      pedidosSalvos=[...document.querySelectorAll("#order-table-body tr")].map(tr=>({
+        id:tr.cells[0]?.innerText.trim(),
+        cliente:tr.cells[1]?.innerText.trim(),
+        data:tr.cells[2]?.innerText.trim(),
+        status:tr.dataset.status||"Recebido",
+        total:tr.cells[4]?.innerText.trim()
+      }));
+      salvarDados();
+    }
+
+    function restaurarPedidos(){
+      const tbody=document.getElementById("order-table-body");
+      if(!pedidosSalvos.length)return;
+      tbody.innerHTML="";
+      pedidosSalvos.forEach(p=>{
+        const tr=document.createElement("tr"); tr.dataset.status=p.status;
+        let acao=p.status==="Recebido"?'<button onclick="iniciarPedido(this)">Preparar</button>':
+          p.status==="Em preparação"?'<button onclick="concluirPedido(this)">Concluir</button>':
+          p.status==="Pendente"?'<button onclick="receberPedido(this)">Receber</button>':'✅';
+        const cls=p.status==="Concluído"?"status-concluido":p.status==="Pendente"?"status-pendente":p.status==="Recebido"?"status-recebido":"status-preparacao";
+        tr.innerHTML=`<td>${p.id}</td><td>${p.cliente}</td><td>${p.data}</td><td><span class="badge ${cls}">${p.status}</span></td><td>${p.total}</td><td>${acao}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
 
     const money = v => "R$ " + Number(v).toFixed(2).replace(".",",");
     function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500)}
@@ -576,6 +644,7 @@ OCTYPE<!html>
 
       const valor=p.preco*qtd;
       p.estoque-=qtd;
+      salvarDados();
       criarPedido(p.nome,valor,cliente);
       renderProdutos();
 
@@ -587,6 +656,7 @@ OCTYPE<!html>
       atividades.prepend(item);
 
       document.getElementById("pedidoForm").reset();
+      localStorage.removeItem("sgpFormulario");
       document.getElementById("qtdRapida").value=1;
       atualizarSelect();
       document.querySelectorAll(".pedido-field").forEach(c=>c.classList.remove("invalid"));
@@ -602,19 +672,21 @@ OCTYPE<!html>
         <td><span class="badge status-recebido">Recebido</span></td><td>${money(valor)}</td>
         <td><button onclick="iniciarPedido(this)">Preparar</button></td>`;
       tbody.appendChild(tr);nextOrderId++;
+      sincronizarPedidos();
       atualizarDashboard();toast("✅ Pedido criado com sucesso!");
     }
 
     function iniciarPedido(btn){
       const tr=btn.closest("tr");tr.dataset.status="Em preparação";
       tr.cells[3].innerHTML='<span class="badge status-preparacao">Em preparação</span>';
-      btn.textContent="Concluir";btn.onclick=()=>concluirPedido(btn);toast("👨‍🍳 Pedido enviado para preparação.");
+      btn.textContent="Concluir";btn.onclick=()=>concluirPedido(btn);
+      sincronizarPedidos();toast("👨‍🍳 Pedido enviado para preparação.");
     }
 
     function concluirPedido(btn){
       const tr=btn.closest("tr");tr.dataset.status="Concluído";
       tr.cells[3].innerHTML='<span class="badge status-concluido">Concluído</span>';btn.replaceWith(document.createTextNode("✅"));
-      atualizarDashboard();toast("🎉 Pedido concluído!");
+      sincronizarPedidos();atualizarDashboard();toast("🎉 Pedido concluído!");
     }
 
     function receberPedido(btn){iniciarPedido(btn)}
@@ -629,6 +701,9 @@ OCTYPE<!html>
       const pct=Math.min(100,totalOrders/60*100);
       document.getElementById("metaBar").style.width=pct+"%";
       document.getElementById("metaTexto").textContent=`${totalOrders} de 60 pedidos realizados — ${Math.round(pct)}% da meta.`;
+      localStorage.setItem("sgpTotalOrders",String(totalOrders));
+      localStorage.setItem("sgpSalesValue",String(salesValue));
+      localStorage.setItem("sgpClientes",String(clientes));
     }
 
     function filtrarTabela(status,botao){
@@ -649,7 +724,7 @@ OCTYPE<!html>
       if(!img)img="https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=500";
       produtos.push({id:Date.now(),nome,preco,img,cat,estoque});
       document.getElementById("new-product-name").value="";document.getElementById("new-product-price").value="";document.getElementById("new-product-img").value="";document.getElementById("new-product-stock").value="20";
-      renderProdutos();toast(`✅ ${nome} cadastrado!`);
+      salvarDados();renderProdutos();toast(`✅ ${nome} cadastrado!`);
     }
 
     function atualizarTotalRapido(){
@@ -669,7 +744,11 @@ OCTYPE<!html>
     }
 
     function mostrarResumo(){alert(`📊 RESUMO DO SGP\\n\\nPedidos: ${totalOrders}\\nFaturamento: ${money(salesValue)}\\nClientes: ${clientes}\\nProdutos: ${produtos.length}\\nAvaliação: 4,9/5`)}
-    function limparPedidos(){document.getElementById("order-table-body").innerHTML="";atualizarDashboard();toast("🗑️ Pedidos removidos do painel.")}
+    function limparPedidos(){
+      if(!confirm("Tem certeza que deseja limpar todos os pedidos?"))return;
+      document.getElementById("order-table-body").innerHTML="";
+      pedidosSalvos=[];salvarDados();atualizarDashboard();toast("🗑️ Pedidos removidos.");
+    }
 
     function alternarTema(){
       const dark=document.body.dataset.dark==="1";
@@ -710,6 +789,10 @@ OCTYPE<!html>
     }
 
     function atualizarDataHora(){document.getElementById("dataHora").textContent=new Date().toLocaleString("pt-BR")}
+    ["clienteRapido","cpfCliente","telefoneCliente","emailCliente","produtoRapido","qtdRapida","observacoesPedido"].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el){el.addEventListener("input",salvarFormulario);el.addEventListener("change",salvarFormulario);}
+    });
     document.getElementById("search").addEventListener("input",renderProdutos);
     document.getElementById("qtdRapida").addEventListener("input",atualizarTotalRapido);
     document.getElementById("produtoRapido").addEventListener("change",atualizarTotalRapido);
@@ -722,7 +805,14 @@ OCTYPE<!html>
     document.getElementById("cpfCliente").addEventListener("blur",function(){
       if(this.value.trim()) validarCampo("cpfCliente",validarCPF(this.value));
     });
-    restaurarPreferencias();setInterval(atualizarDataHora,1000);atualizarDataHora();renderProdutos();atualizarDashboard();atualizarInsights();
+    restaurarPreferencias();
+    setInterval(atualizarDataHora,1000);
+    atualizarDataHora();
+    renderProdutos();
+    restaurarPedidos();
+    restaurarFormulario();
+    atualizarDashboard();
+    atualizarInsights();
   </script>
 </body>
 </html>
