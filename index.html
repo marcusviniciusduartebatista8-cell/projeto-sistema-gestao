@@ -1,354 +1,925 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="SGP - Sistema de Gestão de Pedidos para pequenos estabelecimentos">
-<title>SGP | Sistema de Gestão de Pedidos</title>
-<style>
-:root{
-  --bg:#f4f7fb;--surface:#fff;--surface2:#eef3f9;--text:#172033;--muted:#64748b;
-  --primary:#2563eb;--primary2:#1d4ed8;--success:#16a34a;--warning:#d97706;--danger:#dc2626;
-  --border:#dbe3ef;--shadow:0 12px 30px rgba(15,23,42,.08);--radius:18px;
-}
-body.dark{
-  --bg:#0b1220;--surface:#111827;--surface2:#1f2937;--text:#f1f5f9;--muted:#94a3b8;
-  --primary:#60a5fa;--primary2:#3b82f6;--border:#334155;--shadow:0 12px 30px rgba(0,0,0,.25);
-}
-body.large-font{font-size:18px}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text);transition:.25s}
-button,input,select{font:inherit}
-button{cursor:pointer}
-a{text-decoration:none;color:inherit}
-.app{display:flex;min-height:100vh}
-.sidebar{width:260px;background:var(--surface);border-right:1px solid var(--border);padding:22px 16px;position:fixed;inset:0 auto 0 0;z-index:20}
-.brand{display:flex;gap:12px;align-items:center;padding:8px 10px 24px}
-.logo{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,var(--primary),#7c3aed);display:grid;place-items:center;color:#fff;font-weight:900;font-size:20px}
-.brand strong{display:block;font-size:19px}.brand small{color:var(--muted)}
-.nav{display:grid;gap:7px}
-.nav button{border:0;background:transparent;color:var(--muted);padding:13px 14px;border-radius:12px;text-align:left;display:flex;gap:11px;align-items:center}
-.nav button:hover,.nav button.active{background:var(--surface2);color:var(--primary);font-weight:700}
-.sidebar-footer{position:absolute;bottom:18px;left:16px;right:16px;color:var(--muted);font-size:12px;padding:12px}
-.main{margin-left:260px;width:calc(100% - 260px);min-width:0}
-.topbar{height:74px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:15}
-.topbar-left{display:flex;gap:12px;align-items:center}.mobile-menu{display:none}
-.icon-btn{border:1px solid var(--border);background:var(--surface);color:var(--text);width:42px;height:42px;border-radius:12px}
-.profile{display:flex;align-items:center;gap:10px}.avatar{width:40px;height:40px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:800}
-.content{padding:28px;max-width:1500px;margin:auto}
-.page{display:none}.page.active{display:block}
-.hero{background:linear-gradient(135deg,var(--primary),#7c3aed);color:#fff;border-radius:24px;padding:30px;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:20px;align-items:center}
-.hero h1{margin:0 0 8px;font-size:clamp(25px,3vw,36px)}.hero p{margin:0;opacity:.9}
-.location{margin-top:14px;font-size:14px;opacity:.9}
-.hero-icon{font-size:70px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:22px 0}
-.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
-.stat-head{display:flex;justify-content:space-between;color:var(--muted);font-size:13px}.stat-icon{font-size:23px}.stat strong{display:block;font-size:30px;margin-top:9px}
-.grid2{display:grid;grid-template-columns:1.25fr .75fr;gap:20px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-bottom:20px}
-.card-title{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:18px}.card-title h2{margin:0;font-size:19px}.muted{color:var(--muted)}
-.btn{border:0;border-radius:12px;padding:11px 15px;font-weight:700;display:inline-flex;align-items:center;gap:7px}
-.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary2)}
-.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
-.btn-danger{background:#fee2e2;color:#991b1b}.dark .btn-danger{background:#451a1a;color:#fecaca}
-.actions{display:flex;gap:9px;flex-wrap:wrap}
-.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
-.input,.select{width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:12px 13px;outline:none}
-.input:focus,.select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
-.search{flex:1;min-width:220px}
-table{width:100%;border-collapse:collapse}.table-wrap{overflow:auto}
-th,td{padding:14px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}th{font-size:12px;text-transform:uppercase;color:var(--muted)}
-.badge{display:inline-flex;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800}.badge.pendente{background:#fef3c7;color:#92400e}.badge.preparacao{background:#dbeafe;color:#1d4ed8}.badge.concluido{background:#dcfce7;color:#166534}
-.dark .badge.pendente{background:#422006;color:#fde68a}.dark .badge.preparacao{background:#172554;color:#bfdbfe}.dark .badge.concluido{background:#052e16;color:#bbf7d0}
-.empty{text-align:center;padding:35px;color:var(--muted)}
-.progress{height:9px;background:var(--surface2);border-radius:20px;overflow:hidden}.progress span{display:block;height:100%;background:var(--primary);border-radius:20px}
-.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}.field{display:grid;gap:7px}.field label{font-size:13px;font-weight:700}
-.full{grid-column:1/-1}
-.product-list{display:grid;gap:10px}.product-row{display:flex;justify-content:space-between;align-items:center;background:var(--surface2);padding:13px;border-radius:12px}
-.product-row strong{display:block}.product-row small{color:var(--muted)}
-.toast{position:fixed;right:22px;bottom:22px;background:var(--text);color:var(--surface);padding:13px 17px;border-radius:12px;box-shadow:var(--shadow);transform:translateY(130px);opacity:0;transition:.25s;z-index:50}.toast.show{transform:none;opacity:1}
-.modal{position:fixed;inset:0;background:rgba(2,6,23,.58);display:none;place-items:center;padding:20px;z-index:40}.modal.show{display:grid}
-.modal-box{width:min(700px,100%);max-height:90vh;overflow:auto;background:var(--surface);color:var(--text);border-radius:22px;padding:24px}
-.preference{display:flex;align-items:center;justify-content:space-between;padding:15px 0;border-bottom:1px solid var(--border);gap:15px}
-.switch{position:relative;width:52px;height:30px;display:inline-block}.switch input{display:none}.slider{position:absolute;inset:0;background:#94a3b8;border-radius:30px}.slider:before{content:"";position:absolute;width:22px;height:22px;left:4px;top:4px;background:#fff;border-radius:50%;transition:.2s}.switch input:checked+.slider{background:var(--primary)}.switch input:checked+.slider:before{transform:translateX(22px)}
-footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
-@media(max-width:1050px){.stats{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
-@media(max-width:760px){
- .sidebar{transform:translateX(-100%);transition:.25s}.sidebar.open{transform:none}.main{margin-left:0;width:100%}.mobile-menu{display:block}.topbar{padding:0 15px}.content{padding:16px}.hero{padding:22px}.hero-icon{display:none}.stats{grid-template-columns:repeat(2,1fr);gap:10px}.stat{padding:15px}.stat strong{font-size:24px}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.profile span{display:none}
-}
-@media(max-width:430px){.stats{grid-template-columns:1fr 1fr}.actions .btn{flex:1;justify-content:center}.card{padding:16px}.topbar{height:65px}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <title>Sistema de Gestão de Pedidos Pro</title>
+  <style>
+    *{box-sizing:border-box}
+    :root{
+      --primary:#2563eb;--primary-dark:#1d4ed8;--success:#16a34a;
+      --warning:#f59e0b;--danger:#dc2626;--dark:#0f172a;
+      --muted:#64748b;--bg:#eef2f7;--card:#fff;--border:#e2e8f0;
+    }
+    body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#eef2ff,#f8fafc);
+      margin:0;color:#1e293b}
+    .container{max-width:1400px;margin:auto;padding:22px}
+    header{background:linear-gradient(135deg,#0f172a,#1e40af);color:#fff;padding:28px;
+      border-radius:18px;box-shadow:0 15px 35px rgba(15,23,42,.18);margin-bottom:22px;
+      position:relative;overflow:hidden}
+    header:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;
+      background:rgba(255,255,255,.06);right:-70px;top:-100px}
+    header h1{margin:0 0 8px;font-size:2.35rem}
+    header p{margin:0;opacity:.88}
+    .topbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .topbar button{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2)}
+    .dashboard-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:22px}
+    .indicator-card,.card{background:rgba(255,255,255,.96);border:1px solid var(--border);
+      border-radius:16px;box-shadow:0 7px 20px rgba(15,23,42,.07)}
+    .indicator-card{padding:20px;border-top:4px solid var(--primary)}
+    .indicator-card.green{border-top-color:var(--success)}
+    .indicator-card.orange{border-top-color:var(--warning)}
+    .indicator-card.red{border-top-color:var(--danger)}
+    .indicator-card h3{margin:0 0 8px;font-size:.78rem;color:var(--muted);text-transform:uppercase}
+    .indicator-card .value{font-size:1.65rem;font-weight:800;margin:0}
+    .card{padding:22px;margin-bottom:22px}
+    .card h2{margin:0 0 16px;color:var(--dark);font-size:1.35rem;border-bottom:2px solid #f1f5f9;padding-bottom:10px}
+    .form-group{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+    input,select{padding:12px;border-radius:10px;border:1px solid #cbd5e1;font-size:1rem;
+      background:#fff;min-width:160px}
+    input:focus,select:focus{outline:3px solid rgba(37,99,235,.12);border-color:var(--primary)}
+    button{background:var(--primary);color:#fff;border:0;padding:11px 17px;border-radius:10px;
+      cursor:pointer;font-weight:700;transition:.2s;box-shadow:0 3px 8px rgba(37,99,235,.15)}
+    button:hover{transform:translateY(-1px);background:var(--primary-dark)}
+    .btn-success{background:var(--success)} .btn-danger{background:var(--danger)}
+    .btn-warning{background:var(--warning);color:#111827}.btn-secondary{background:#475569}
+    .btn-block{width:100%}
+    .products-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+    .product-card{background:#fff;border:1px solid var(--border);border-radius:15px;overflow:hidden;
+      display:flex;flex-direction:column;box-shadow:0 4px 12px rgba(0,0,0,.04);transition:.2s}
+    .product-card:hover{transform:translateY(-5px);box-shadow:0 12px 25px rgba(15,23,42,.12)}
+    .product-image{width:100%;height:155px;object-fit:cover;background:#e2e8f0}
+    .product-details{padding:15px;display:flex;flex-direction:column;gap:9px}
+    .product-name{font-weight:800;font-size:1.05rem;margin:0}.price{color:var(--success);font-weight:800;margin:0}
+    .product-tag{font-size:.75rem;color:#475569;background:#f1f5f9;padding:4px 8px;border-radius:20px;width:max-content}
+    .filter-buttons{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+    .filter-btn{background:#e2e8f0;color:#475569;box-shadow:none;padding:7px 13px}
+    .filter-btn.active{background:#475569;color:#fff}
+    .table-wrap{overflow:auto} table{width:100%;border-collapse:collapse;min-width:700px}
+    th,td{padding:13px 12px;border-bottom:1px solid var(--border);text-align:left}
+    th{background:#f8fafc;color:var(--muted);font-size:.85rem}
+    tr:hover td{background:#f8fafc}
+    .badge{padding:5px 9px;border-radius:20px;font-size:.78rem;font-weight:800}
+    .status-preparacao{background:#fef3c7;color:#b45309}.status-concluido{background:#dcfce7;color:#15803d}
+    .status-pendente{background:#fee2e2;color:#b91c1c}.status-recebido{background:#e0f2fe;color:#0369a1}
+    .two-col{display:grid;grid-template-columns:1.3fr .7fr;gap:22px}
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .mini-stat{padding:16px;border-radius:12px;background:#f8fafc;border:1px solid var(--border)}
+    .mini-stat strong{display:block;font-size:1.35rem;margin-top:5px}
+    .progress{height:16px;background:#e2e8f0;border-radius:20px;overflow:hidden}
+    .progress-bar{height:100%;width:80%;background:linear-gradient(90deg,#2563eb,#16a34a);transition:width .4s}
+    .chart{display:flex;align-items:flex-end;gap:12px;height:190px;padding:15px 8px 0}
+    .bar{flex:1;background:linear-gradient(180deg,#60a5fa,#2563eb);border-radius:7px 7px 0 0;
+      min-width:22px;position:relative}.bar span{position:absolute;top:-22px;width:100%;text-align:center;font-size:.72rem}
+    .bar small{position:absolute;bottom:-22px;width:100%;text-align:center;color:#64748b}
+    .activity{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+    .dot{width:11px;height:11px;border-radius:50%;background:var(--success);margin-top:6px}
+    .activity p{margin:0}.activity small{color:var(--muted)}
+    .empty{padding:25px;text-align:center;color:var(--muted)}
+    .toast{position:fixed;right:22px;bottom:22px;background:#0f172a;color:#fff;padding:14px 18px;
+      border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:.3s;z-index:10}
+    .toast.show{opacity:1}
+    footer{margin:35px 0 10px;text-align:center;color:#64748b}
+    @media(max-width:1100px){.dashboard-grid{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:800px){.two-col{grid-template-columns:1fr}.stats-row{grid-template-columns:1fr}
+      .dashboard-grid{grid-template-columns:repeat(2,1fr)}header h1{font-size:1.8rem}}
+    @media(max-width:520px){.container{padding:12px}.dashboard-grid{grid-template-columns:1fr}}
+
+    /* ===== MODO CELULAR / RESPONSIVO AVANÇADO ===== */
+    @media (max-width: 700px) {
+      body { overflow-x: hidden; }
+      .container { width:100%; max-width:100%; padding:10px; }
+      header { padding:20px 16px; border-radius:14px; margin-bottom:14px; }
+      header h1 { font-size:1.45rem; line-height:1.2; }
+      header p { font-size:.85rem; line-height:1.4; }
+      .topbar { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+      .topbar button { width:100%; min-height:44px; padding:10px 6px; font-size:.82rem; }
+      .dashboard-grid { grid-template-columns:1fr 1fr !important; gap:9px; margin-bottom:14px; }
+      .indicator-card { padding:14px 12px; border-radius:12px; }
+      .indicator-card h3 { font-size:.66rem; line-height:1.2; }
+      .indicator-card .value { font-size:1.25rem; word-break:break-word; }
+      .card { padding:15px 13px; margin-bottom:14px; border-radius:13px; }
+      .card h2 { font-size:1.08rem; line-height:1.3; margin-bottom:13px; }
+      .form-group { display:flex; flex-direction:column; gap:8px; }
+      input, select, .form-group input, .form-group select {
+        width:100%; min-width:0; min-height:46px; font-size:16px;
+      }
+      button { width:100%; min-height:44px; font-size:.9rem; }
+      .products-grid { grid-template-columns:1fr 1fr !important; gap:10px; }
+      .product-card { min-width:0; border-radius:12px; }
+      .product-image { height:125px; }
+      .product-details { padding:11px; gap:7px; }
+      .product-name { font-size:.94rem; line-height:1.2; }
+      .price { font-size:1rem; }
+      .product-tag { font-size:.65rem; }
+      .product-details button { font-size:.76rem; padding:9px 5px; min-height:40px; }
+      .filter-buttons { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+      .filter-btn { width:100%; font-size:.75rem; padding:9px 5px; min-height:40px; }
+      .table-wrap { overflow-x:auto; margin:0 -3px; border-radius:8px; }
+      table { min-width:620px; font-size:.78rem; }
+      th, td { padding:10px 8px; }
+      .two-col { grid-template-columns:1fr !important; gap:14px; }
+      .stats-row { grid-template-columns:1fr !important; gap:8px; }
+      .mini-stat { padding:13px; }
+      .mini-stat strong { font-size:1.2rem; }
+      .chart { height:160px; gap:7px; padding-left:2px; padding-right:2px; }
+      .bar span, .bar small { font-size:.65rem; }
+      .activity { gap:9px; font-size:.85rem; }
+      .toast { left:10px; right:10px; bottom:12px; text-align:center; font-size:.88rem; }
+      footer { font-size:.78rem; padding:0 10px; }
+    }
+
+    @media (max-width: 390px) {
+      .dashboard-grid { grid-template-columns:1fr !important; }
+      .products-grid { grid-template-columns:1fr !important; }
+      header h1 { font-size:1.3rem; }
+      .topbar { grid-template-columns:1fr; }
+      .indicator-card .value { font-size:1.45rem; }
+    }
+
+  
+    /* ===== RECURSOS NOTA 1000 ===== */
+    .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .kpi-sub{font-size:.78rem;color:var(--muted);margin-top:7px}
+    .insights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .insight{padding:18px;border:1px solid var(--border);background:#f8fafc;border-radius:14px}
+    .insight h3{margin:0 0 6px;font-size:1rem}.insight p{margin:0;color:var(--muted)}
+    .login-demo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .ai-box{background:linear-gradient(135deg,#eff6ff,#ecfeff);border:1px solid #bfdbfe;border-radius:14px;padding:17px}
+    .ai-answer{margin-top:12px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;min-height:58px}
+    .stock-low{color:#b91c1c;font-weight:800}.stock-ok{color:#15803d;font-weight:800}
+    .modal{position:fixed;inset:0;background:rgba(15,23,42,.62);display:none;align-items:center;justify-content:center;padding:18px;z-index:30}
+    .modal.open{display:flex}.modal-content{width:min(560px,100%);background:#fff;border-radius:18px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.3)}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.modal-head h2{margin:0}
+    .modal-close{width:auto;background:#e2e8f0;color:#334155;box-shadow:none}
+    body[data-dark="1"] .card,body[data-dark="1"] .indicator-card,body[data-dark="1"] .product-card,body[data-dark="1"] .modal-content{background:#111827;color:#e5e7eb;border-color:#334155}
+    body[data-dark="1"] .card h2,body[data-dark="1"] .product-name{color:#f8fafc}
+    body[data-dark="1"] input,body[data-dark="1"] select{background:#0f172a;color:#e5e7eb;border-color:#475569}
+    body[data-dark="1"] .mini-stat,body[data-dark="1"] .insight,body[data-dark="1"] th,body[data-dark="1"] tr:hover td{background:#172033;color:#e5e7eb}
+    body[data-dark="1"] .ai-box{background:#172554;border-color:#1d4ed8}
+    body[data-dark="1"] .ai-answer{background:#0f172a;border-color:#334155}
+
+    /* ===== FORMULÁRIO FAZER PEDIDO — ATIVIDADE DO PROFESSOR ===== */
+    .pedido-form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .pedido-field{display:flex;flex-direction:column;gap:6px}
+    .pedido-field.full{grid-column:1/-1}
+    .pedido-field label{font-weight:700;font-size:.9rem;color:#334155}
+    .pedido-field label span{color:var(--danger)}
+    .pedido-field input,.pedido-field select,.pedido-field textarea{width:100%;min-width:0}
+    .pedido-field textarea{min-height:90px;resize:vertical;padding:12px;border-radius:10px;border:1px solid #cbd5e1;font:inherit}
+    .pedido-field small{color:var(--muted);font-size:.76rem}
+    .field-error{display:none;color:var(--danger);font-size:.78rem;font-weight:700}
+    .pedido-field.invalid input,.pedido-field.invalid select,.pedido-field.invalid textarea{border-color:var(--danger);outline:3px solid rgba(220,38,38,.10)}
+    .pedido-field.invalid .field-error{display:block}
+    .pedido-info{padding:14px 16px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;margin-bottom:15px}
+    .pedido-info strong{color:#1d4ed8}
+    .pedido-alert{display:none;padding:12px 14px;border-radius:10px;margin-top:12px;font-weight:700}
+    .pedido-alert.error{display:block;background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+    .pedido-alert.success{display:block;background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+    .cpf-ok{color:var(--success);font-weight:700}
+    @media(max-width:800px){.pedido-form{grid-template-columns:1fr}.pedido-field.full{grid-column:auto}}
+
+    @media(max-width:800px){.insights-grid,.login-demo{grid-template-columns:1fr}}
+
+    /* ===== VERSÃO FINAL — CELULAR/TABLET ===== */
+    .mobile-status{
+      display:none;margin:0 0 14px;padding:10px 12px;border-radius:10px;
+      background:#ecfdf5;border:1px solid #bbf7d0;color:#166534;font-size:.82rem;font-weight:700
+    }
+    .data-tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .data-tools button{width:auto}
+    @media (max-width: 700px){
+      .mobile-status{display:block}
+      .hero-actions,.data-tools{display:grid;grid-template-columns:1fr}
+      .hero-actions button,.data-tools button{width:100%}
+      .section-title{align-items:stretch}
+      .section-title button{width:100%}
+      .ai-box .form-group{gap:9px}
+      .ai-box select{min-height:48px}
+      .ai-answer{font-size:.9rem;line-height:1.5}
+      .table-wrap::after{
+        content:"Deslize para os lados para ver todas as colunas";
+        display:block;text-align:center;color:#64748b;font-size:.72rem;padding:7px 0 0
+      }
+    }
+    @media (max-width: 390px){
+      .container{padding:8px}
+      header{padding:17px 13px}
+      header h1{font-size:1.22rem}
+      header p{font-size:.78rem}
+      .card{padding:13px 11px}
+      .indicator-card .value{font-size:1.3rem}
+      .product-image{height:115px}
+    }
+
+  </style>
 </head>
 <body>
-<div class="app">
-<aside class="sidebar" id="sidebar">
-  <div class="brand">
-    <div class="logo">SG</div>
-    <div><strong>SGP</strong><small>Gestão de Pedidos</small></div>
-  </div>
-  <nav class="nav">
-    <button data-page="dashboard" class="active">📊 Dashboard</button>
-    <button data-page="pedidos">📋 Pedidos</button>
-    <button data-page="novo-pedido">➕ Novo pedido</button>
-    <button data-page="produtos">🍔 Produtos</button>
-    <button data-page="preferencias">⚙️ Preferências</button>
-  </nav>
-  <div class="sidebar-footer">Projeto Integrador<br>Técnico em Desenvolvimento de Sistemas</div>
-</aside>
 
-<main class="main">
-<header class="topbar">
-  <div class="topbar-left">
-    <button class="icon-btn mobile-menu" onclick="toggleSidebar()">☰</button>
-    <strong id="pageTitle">Dashboard</strong>
-  </div>
-  <div class="profile">
-    <button class="icon-btn" id="quickTheme" title="Alterar tema">🌙</button>
-    <div class="avatar">MV</div><span>Usuário</span>
-  </div>
-</header>
-
-<section class="content">
-<div class="page active" id="dashboard">
-  <div class="hero">
-    <div>
-      <h1>Olá! 👋 Bem-vindo ao SGP</h1>
-      <p>Controle seus pedidos de forma simples, rápida e organizada.</p>
-      <div class="location">📍 Estabelecimento: Teresina – Shopping Rio Poty</div>
-    </div>
-    <div class="hero-icon">📦</div>
-  </div>
-
-  <div class="stats">
-    <div class="stat"><div class="stat-head"><span>Total de pedidos</span><span class="stat-icon">📦</span></div><strong id="statTotal">0</strong></div>
-    <div class="stat"><div class="stat-head"><span>Pendentes</span><span class="stat-icon">⏳</span></div><strong id="statPending">0</strong></div>
-    <div class="stat"><div class="stat-head"><span>Em preparação</span><span class="stat-icon">👨‍🍳</span></div><strong id="statPreparing">0</strong></div>
-    <div class="stat"><div class="stat-head"><span>Faturamento</span><span class="stat-icon">💰</span></div><strong id="statRevenue">R$ 0,00</strong></div>
-  </div>
-
-  <div class="grid2">
-    <div class="card">
-      <div class="card-title"><h2>📋 Pedidos recentes</h2><button class="btn btn-secondary" onclick="showPage('pedidos')">Ver todos</button></div>
-      <div id="recentOrders"></div>
-    </div>
-    <div class="card">
-      <div class="card-title"><h2>📈 Status dos pedidos</h2></div>
-      <div id="statusSummary"></div>
-    </div>
-  </div>
-</div>
-
-<div class="page" id="pedidos">
-  <div class="card">
-    <div class="card-title"><div><h2>📋 Gestão de pedidos</h2><span class="muted">O último filtro utilizado será lembrado.</span></div><button class="btn btn-primary" onclick="showPage('novo-pedido')">➕ Novo pedido</button></div>
-    <div class="filters">
-      <input class="input search" id="search" placeholder="🔎 Pesquisar por cliente..." oninput="renderOrders()">
-      <select class="select" id="filterStatus" style="max-width:230px" onchange="saveFilter();renderOrders()">
-        <option value="Todos">Todos os status</option><option value="Pendente">Pendente</option><option value="Em preparação">Em preparação</option><option value="Concluído">Concluído</option>
-      </select>
-    </div>
-    <div class="table-wrap"><table><thead><tr><th>ID</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Status</th><th>Ação</th></tr></thead><tbody id="ordersBody"></tbody></table></div>
-  </div>
-</div>
-
-<div class="page" id="novo-pedido">
-  <div class="card">
-    <div class="card-title"><div><h2>➕ Criar novo pedido</h2><span class="muted">Preencha os dados abaixo.</span></div></div>
-    <form id="orderForm">
-      <div class="form-grid">
-        <div class="field"><label for="customer">Nome do cliente *</label><input class="input" id="customer" required placeholder="Ex.: João Silva"></div>
-        <div class="field"><label for="phone">Telefone</label><input class="input" id="phone" placeholder="(86) 99999-9999"></div>
-        <div class="field"><label for="product">Produto *</label><select class="select" id="product" required></select></div>
-        <div class="field"><label for="quantity">Quantidade *</label><input class="input" id="quantity" type="number" min="1" max="99" value="1" required></div>
-        <div class="field"><label for="status">Status</label><select class="select" id="status"><option>Pendente</option><option>Em preparação</option><option>Concluído</option></select></div>
-        <div class="field"><label for="location">Local do estabelecimento</label><input class="input" id="location" value="Teresina – Shopping Rio Poty" readonly></div>
-        <div class="field full"><label for="notes">Observações</label><input class="input" id="notes" placeholder="Ex.: sem cebola, entregar no balcão..."></div>
+  <div class="container">
+    <div class="mobile-status">📱 Interface adaptada para celular, tablet e computador.</div>
+    <header>
+      <h1>🚀 SGP — Sistema de Gestão de Pedidos Pro</h1>
+      <p>Projeto Integrador • Técnico em Desenvolvimento de Sistemas • Edição Final 2026</p>
+      <div class="topbar">
+        <button onclick="rolar('produtos')">🍔 Cardápio</button>
+        <button onclick="rolar('pedidos')">📦 Pedidos</button>
+        <button onclick="rolar('fazer-pedido')">🧾 Fazer Pedido</button>
+        <button onclick="rolar('relatorios')">📊 Relatórios</button>
+        <button onclick="alternarTema()">🌙 Tema</button>
+        <button onclick="abrirLogin()">🔐 Acesso</button>
+        <button onclick="rolar('ia')">🤖 IA</button>
       </div>
-      <div class="actions" style="margin-top:20px"><button class="btn btn-primary" type="submit">💾 Salvar pedido</button><button class="btn btn-secondary" type="reset">Limpar</button></div>
-    </form>
+    </header>
+
+    <div class="dashboard-grid">
+      <div class="indicator-card"><h3>💰 Faturamento Hoje</h3><p class="value" id="dash-sales">R$ 2.540,00</p><div class="kpi-sub">↑ 12% comparado a ontem</div></div>
+      <div class="indicator-card green"><h3>🛒 Pedidos</h3><p class="value" id="dash-orders">48</p><div class="kpi-sub">Ticket médio: <span id="ticketMedio">R$ 52,92</span></div></div>
+      <div class="indicator-card orange"><h3>👥 Clientes</h3><p class="value" id="dash-clients">32</p></div>
+      <div class="indicator-card red"><h3>⏳ Pendentes</h3><p class="value" id="dash-pending">1</p></div>
+      <div class="indicator-card"><h3>⭐ Avaliação</h3><p class="value">4,9/5</p></div>
+    </div>
+
+    <div class="card">
+      <h2>🖥️ Painel Administrativo</h2>
+      <p><strong>Status:</strong> <span id="statusSistema">🟢 Online</span> &nbsp;|&nbsp; <strong>Horário:</strong> <span id="dataHora"></span></p>
+      <p><strong>Versão:</strong> 3.0.0 Final Pro &nbsp;|&nbsp; <strong>Última atualização:</strong> 11/08/2026</p>
+      <button class="btn-success" onclick="gerarRelatorio()">📄 Gerar Relatório</button>
+      <button class="btn-secondary" onclick="exportarCSV()">⬇️ Exportar Pedidos CSV</button>
+      <button class="btn-warning" onclick="mostrarResumo()">📈 Ver Resumo</button>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><h2>📌 Indicadores Inteligentes</h2><button class="btn-secondary" onclick="atualizarInsights()">Atualizar análise</button></div>
+      <div class="insights-grid">
+        <div class="insight"><h3>🔥 Produto destaque</h3><p id="produtoDestaque">Combo SGP possui alto potencial de venda.</p></div>
+        <div class="insight"><h3>⏱️ Tempo médio</h3><p>18 min por pedido — dentro da meta de 25 min.</p></div>
+        <div class="insight"><h3>📦 Estoque</h3><p id="estoqueAviso"><span class="stock-low">Atenção:</span> 2 itens próximos do estoque mínimo.</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>➕ Cadastrar Novo Produto</h2>
+      <div class="form-group">
+        <input type="text" id="new-product-name" placeholder="Nome do produto">
+        <input type="number" id="new-product-price" placeholder="Preço R$" step="0.01">
+        <input type="text" id="new-product-img" placeholder="Link da imagem (opcional)">
+        <input type="number" id="new-product-stock" placeholder="Estoque" min="0" value="20">
+        <select id="new-product-category">
+          <option>Hambúrgueres</option><option>Pizzas</option><option>Bebidas</option>
+          <option>Porções</option><option>Combos</option><option>Sobremesas</option>
+        </select>
+        <button onclick="cadastrarProduto()">Salvar Produto</button>
+      </div>
+    </div>
+
+    <div class="card" id="produtos">
+      <h2>🔎 Cardápio Digital</h2>
+      <input type="text" id="search" placeholder="Pesquisar produto...">
+      <div class="filter-buttons" style="margin-top:12px">
+        <button class="filter-btn active" onclick="filtrarProdutos('Todos',this)">Todos</button>
+        <button class="filter-btn" onclick="filtrarProdutos('Hambúrgueres',this)">🍔 Hambúrgueres</button>
+        <button class="filter-btn" onclick="filtrarProdutos('Pizzas',this)">🍕 Pizzas</button>
+        <button class="filter-btn" onclick="filtrarProdutos('Bebidas',this)">🥤 Bebidas</button>
+        <button class="filter-btn" onclick="filtrarProdutos('Porções',this)">🍟 Porções</button>
+        <button class="filter-btn" onclick="filtrarProdutos('Combos',this)">🔥 Combos</button>
+        <button class="filter-btn" onclick="filtrarProdutos('Sobremesas',this)">🍰 Sobremesas</button>
+      </div>
+      <div class="products-grid" id="products-list"></div>
+    </div>
+
+    <div class="two-col">
+      <div class="card" id="pedidos">
+        <h2>📦 Controle de Pedidos</h2>
+        <div class="filter-buttons">
+          <button class="filter-btn active" onclick="filtrarTabela('todos',this)">Todos</button>
+          <button class="filter-btn" onclick="filtrarTabela('Recebido',this)">Novos</button>
+          <button class="filter-btn" onclick="filtrarTabela('Em preparação',this)">Preparação</button>
+          <button class="filter-btn" onclick="filtrarTabela('Concluído',this)">Concluídos</button>
+          <button class="filter-btn" onclick="filtrarTabela('Pendente',this)">Pendentes</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Pedido</th><th>Cliente</th><th>Data</th><th>Status</th><th>Total</th><th>Ação</th></tr></thead>
+            <tbody id="order-table-body">
+              <tr data-status="Em preparação"><td>101</td><td>João</td><td>Hoje</td><td><span class="badge status-preparacao">Em preparação</span></td><td>R$ 52,00</td><td><button onclick="concluirPedido(this)">Concluir</button></td></tr>
+              <tr data-status="Concluído"><td>102</td><td>Maria</td><td>Hoje</td><td><span class="badge status-concluido">Concluído</span></td><td>R$ 25,50</td><td>✅</td></tr>
+              <tr data-status="Pendente"><td>103</td><td>Carlos</td><td>Hoje</td><td><span class="badge status-pendente">Pendente</span></td><td>R$ 73,00</td><td><button onclick="receberPedido(this)">Receber</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn-danger" style="margin-top:16px" onclick="limparPedidos()">🗑️ Limpar Pedidos</button>
+      </div>
+
+      <div class="card" id="fazer-pedido">
+        <h2>🧾 Fazer Pedido</h2>
+        <div class="pedido-info">
+          <strong>💾 Salvamento automático:</strong> os dados digitados ficam salvos neste navegador mesmo após atualizar ou fechar a página.
+            <br><small>Os dados são locais e não são enviados para um servidor.</small>
+            <br><br><strong>🛡️ Validação do formulário:</strong> campos obrigatórios, CPF, telefone, e-mail, quantidade e nome sem números.
+          <br><br><strong>📍 Local do estabelecimento:</strong> Shopping Rio Poty — Teresina/PI
+          <br><small>O CPF abaixo é do cliente e é validado antes do envio do pedido.</small>
+        </div>
+
+        <form id="pedidoForm" onsubmit="event.preventDefault(); criarPedidoCompleto();">
+          <div class="pedido-form">
+            <div class="pedido-field" id="fieldCliente">
+              <label for="clienteRapido">Nome completo <span>*</span></label>
+              <input id="clienteRapido" type="text" autocomplete="name" placeholder="Ex.: João da Silva" maxlength="80" pattern="[A-Za-zÀ-ÖØ-öø-ÿ ]+" required autocomplete="name">
+              <small>Somente letras e espaços. Não é permitido colocar números ou símbolos.</small>
+              <span class="field-error">Digite nome e sobrenome usando apenas letras.</span>
+            </div>
+
+            <div class="pedido-field" id="fieldCpf">
+              <label for="cpfCliente">CPF <span>*</span></label>
+              <input id="cpfCliente" type="text" inputmode="numeric" maxlength="14"
+                     placeholder="000.000.000-00" autocomplete="off" required>
+              <small>Digite um CPF válido.</small>
+              <span class="field-error">CPF inválido.</span>
+            </div>
+
+            <div class="pedido-field">
+              <label for="telefoneCliente">Telefone <span>*</span></label>
+              <input id="telefoneCliente" type="tel" inputmode="tel" maxlength="15"
+                     placeholder="(86) 99999-9999" required>
+              <small>Ex.: (86) 99999-9999.</small>
+            </div>
+
+            <div class="pedido-field">
+              <label for="produtoRapido">Produto <span>*</span></label>
+              <select id="produtoRapido" required></select>
+              <small>Selecione o produto desejado.</small>
+            </div>
+
+            <div class="pedido-field">
+              <label for="qtdRapida">Quantidade <span>*</span></label>
+              <input id="qtdRapida" type="number" value="1" min="1" max="999" required>
+              <small>Quantidade deve ser maior que zero.</small>
+            </div>
+
+            <div class="pedido-field">
+              <label for="emailCliente">E-mail</label>
+              <input id="emailCliente" type="email" autocomplete="email" placeholder="cliente@email.com">
+              <small>Opcional.</small>
+            </div>
+
+            <div class="pedido-field full">
+              <label for="observacoesPedido">Observações</label>
+              <textarea id="observacoesPedido" placeholder="Ex.: sem cebola, ponto da carne, observações da entrega..."></textarea>
+              <small>Campo opcional para detalhes do pedido.</small>
+            </div>
+
+            <div class="pedido-field full">
+              <p style="margin:0"><strong>Total do pedido:</strong></p>
+              <p id="totalRapido" style="font-size:1.8rem;font-weight:800;color:#16a34a;margin:0">R$ 0,00</p>
+            </div>
+
+            <div class="pedido-field full">
+              <button type="submit" class="btn-success btn-block">✅ Finalizar Pedido</button>
+            </div>
+          </div>
+
+          <div id="pedidoAlerta" class="pedido-alert" role="alert"></div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🎯 Meta de Pedidos</h2>
+      <div class="progress"><div class="progress-bar" id="metaBar"></div></div>
+      <p id="metaTexto">48 de 60 pedidos realizados — 80% da meta.</p>
+    </div>
+
+    <div class="data-tools">
+          <button class="btn-secondary" onclick="exportarBackup()">💾 Fazer backup dos dados</button>
+          <button class="btn-danger" onclick="limparDadosLocais()">🗑️ Limpar dados salvos</button>
+        </div>
+
+    <div class="two-col" id="relatorios">
+      <div class="card">
+        <h2>📊 Relatório de Vendas</h2>
+        <div class="chart">
+          <div class="bar" style="height:55%"><span>32</span><small>Seg</small></div>
+          <div class="bar" style="height:72%"><span>41</span><small>Ter</small></div>
+          <div class="bar" style="height:65%"><span>37</span><small>Qua</small></div>
+          <div class="bar" style="height:88%"><span>52</span><small>Qui</small></div>
+          <div class="bar" style="height:78%"><span>46</span><small>Sex</small></div>
+          <div class="bar" style="height:96%"><span>58</span><small>Sáb</small></div>
+          <div class="bar" style="height:80%"><span>48</span><small>Hoje</small></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>⚡ Atividade Recente</h2>
+        <div id="activities">
+          <div class="activity"><div class="dot"></div><div><p><strong>Pedido #103</strong> aguardando pagamento.</p><small>há 5 minutos</small></div></div>
+          <div class="activity"><div class="dot"></div><div><p><strong>Produto cadastrado:</strong> Batata Frita.</p><small>há 18 minutos</small></div></div>
+          <div class="activity"><div class="dot"></div><div><p><strong>Pedido #102</strong> concluído.</p><small>há 32 minutos</small></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="ia">
+      <h2>🤖 Assistente Inteligente do SGP</h2>
+      <div class="ai-box">
+        <p><strong>Assistente inteligente:</strong> analisa os dados atuais de vendas, pedidos, clientes e estoque e gera recomendações automáticas. Nesta versão acadêmica, a análise é executada localmente em JavaScript.</p>
+        <div class="form-group">
+          <select id="perguntaIA">
+            <option value="vendas">Como melhorar as vendas?</option>
+            <option value="estoque">O que devo verificar no estoque?</option>
+            <option value="pedidos">Como melhorar os pedidos?</option>
+            <option value="resumo">Faça um resumo do negócio</option>
+          </select>
+          <button onclick="consultarIA()">✨ Analisar</button>
+        </div>
+        <div class="ai-answer" id="respostaIA">Selecione uma análise e clique em “Analisar”.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>⭐ Avaliações dos Clientes</h2>
+      <div class="stats-row">
+        <div class="mini-stat">Nota média<strong>4,9 ⭐</strong></div>
+        <div class="mini-stat">Avaliações<strong>128</strong></div>
+        <div class="mini-stat">Recomendariam<strong>96%</strong></div>
+      </div>
+      <p>⭐⭐⭐⭐⭐ <strong>João:</strong> Excelente atendimento e sistema muito rápido!</p>
+      <p>⭐⭐⭐⭐⭐ <strong>Maria:</strong> Pedido organizado e entrega rápida.</p>
+      <p>⭐⭐⭐⭐⭐ <strong>Carlos:</strong> Muito fácil de usar.</p>
+    </div>
+
+    <footer>
+      <p>🏆 <strong>Projeto Integrador — SGP Final Pro</strong></p>
+      <p>Desenvolvido por Marcus Vinicius Duarte Batista • Sistema demonstrativo acadêmico</p>
+      <p><strong>HTML5 • CSS3 • JavaScript • LocalStorage • GitHub Pages</strong></p>
+    </footer>
   </div>
-</div>
-
-<div class="page" id="produtos">
-  <div class="card">
-    <div class="card-title"><div><h2>🍔 Produtos</h2><span class="muted">Catálogo utilizado nos pedidos.</span></div></div>
-    <div class="product-list" id="productList"></div>
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <div class="modal-head"><h2>🔐 Acesso ao Sistema</h2><button class="modal-close" onclick="fecharLogin()">✕</button></div>
+      <p>Simulação de controle de acesso por perfil.</p>
+      <div class="login-demo">
+        <input id="loginNome" placeholder="Usuário" value="admin">
+        <select id="loginPerfil"><option>Administrador</option><option>Atendente</option><option>Gerente</option></select>
+      </div>
+      <button class="btn-success btn-block" style="margin-top:14px" onclick="entrarSistema()">Entrar</button>
+    </div>
   </div>
-</div>
+  <div class="toast" id="toast"></div>
+  <script>
+    const PRODUTOS_PADRAO = [
+      {id:1,nome:"Hambúrguer",preco:18.50,img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500",cat:"Hambúrgueres",estoque:24},
+      {id:2,nome:"Pizza",preco:45.00,img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",cat:"Pizzas",estoque:15},
+      {id:3,nome:"Refrigerante",preco:7.50,img:"https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500",cat:"Bebidas",estoque:40},
+      {id:4,nome:"Batata Frita",preco:15.00,img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500",cat:"Porções",estoque:9},
+      {id:5,nome:"Combo SGP",preco:39.90,img:"https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",cat:"Combos",estoque:7},
+      {id:6,nome:"Milkshake",preco:16.90,img:"https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500",cat:"Sobremesas",estoque:12}
+    ];
 
-<div class="page" id="preferencias">
-  <div class="card">
-    <div class="card-title"><div><h2>⚙️ Preferências do usuário</h2><span class="muted">As configurações são armazenadas no navegador.</span></div></div>
-    <div class="preference">
-      <div><strong>🌙 Modo escuro</strong><div class="muted">Lembrar sua preferência de tema.</div></div>
-      <label class="switch"><input id="themeToggle" type="checkbox" onchange="setTheme(this.checked?'escuro':'claro')"><span class="slider"></span></label>
-    </div>
-    <div class="preference">
-      <div><strong>🔠 Tamanho da fonte</strong><div class="muted">Escolha o tamanho para facilitar a leitura.</div></div>
-      <select class="select" id="fontSize" style="max-width:180px" onchange="setFontSize(this.value)">
-        <option value="normal">Normal</option><option value="large">Grande</option>
-      </select>
-    </div>
-    <div class="preference">
-      <div><strong>🔔 Notificações</strong><div class="muted">Ativar avisos visuais do sistema.</div></div>
-      <label class="switch"><input id="notifications" type="checkbox" onchange="setNotifications(this.checked)"><span class="slider"></span></label>
-    </div>
-    <div class="preference">
-      <div><strong>📋 Último filtro</strong><div class="muted">O SGP guarda automaticamente o último filtro escolhido.</div></div>
-      <strong id="savedFilterLabel">Todos</strong>
-    </div>
-    <div class="actions" style="margin-top:20px"><button class="btn btn-secondary" onclick="resetPreferences()">🔄 Restaurar configurações</button></div>
-  </div>
-</div>
-</section>
-<footer>SGP • Sistema de Gestão de Pedidos • Projeto Integrador • Persistência com LocalStorage</footer>
-</main>
-</div>
+    /* ===== LOCALSTORAGE — PERSISTÊNCIA DOS DADOS =====
+       Os dados ficam salvos neste navegador/dispositivo. */
+    function carregarLocalStorage(chave,padrao){
+      try{
+        const valor=localStorage.getItem(chave);
+        return valor ? JSON.parse(valor) : JSON.parse(JSON.stringify(padrao));
+      }catch(e){ return JSON.parse(JSON.stringify(padrao)); }
+    }
 
-<div class="modal" id="orderModal"><div class="modal-box">
-  <div class="card-title"><h2>📦 Detalhes do pedido</h2><button class="icon-btn" onclick="closeModal()">✕</button></div>
-  <div id="orderDetails"></div>
-</div></div>
-<div class="toast" id="toast"></div>
+    let produtos=carregarLocalStorage("sgpProdutos",PRODUTOS_PADRAO);
+    let pedidosSalvos=carregarLocalStorage("sgpPedidos",[]);
+    let categoriaAtual="Todos";
+    let totalOrders=Number(localStorage.getItem("sgpTotalOrders"))||48;
+    let salesValue=Number(localStorage.getItem("sgpSalesValue"))||2540;
+    let nextOrderId=Number(localStorage.getItem("sgpNextOrderId"))||104;
+    let clientes=Number(localStorage.getItem("sgpClientes"))||32;
 
-<script>
-const PRODUCTS=[
- {id:1,name:"Hambúrguer",price:18.50,icon:"🍔"},
- {id:2,name:"Pizza",price:45.00,icon:"🍕"},
- {id:3,name:"Refrigerante",price:7.50,icon:"🥤"},
- {id:4,name:"Batata Frita",price:15.00,icon:"🍟"},
- {id:5,name:"Combo SGP",price:32.90,icon:"🍱"}
-];
+    function salvarDados(){
+      localStorage.setItem("sgpProdutos",JSON.stringify(produtos));
+      localStorage.setItem("sgpPedidos",JSON.stringify(pedidosSalvos));
+      localStorage.setItem("sgpTotalOrders",String(totalOrders));
+      localStorage.setItem("sgpSalesValue",String(salesValue));
+      localStorage.setItem("sgpNextOrderId",String(nextOrderId));
+      localStorage.setItem("sgpClientes",String(clientes));
+    }
 
-const defaultOrders=[
- {id:1001,customer:"João Silva",phone:"(86) 99999-1111",product:"Hambúrguer",qty:2,total:37,status:"Em preparação",notes:""},
- {id:1002,customer:"Maria Santos",phone:"(86) 99999-2222",product:"Pizza",qty:1,total:45,status:"Concluído",notes:""},
- {id:1003,customer:"Carlos Lima",phone:"(86) 99999-3333",product:"Combo SGP",qty:1,total:32.9,status:"Pendente",notes:""}
-];
+    // ===== RASCUNHO DO FORMULÁRIO — LOCALSTORAGE =====
+    // Salva automaticamente o que o usuário digitou para continuar depois.
+    function salvarFormulario(){
+      const dados={};
+      ["clienteRapido","cpfCliente","telefoneCliente","emailCliente",
+       "produtoRapido","qtdRapida","observacoesPedido"].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) dados[id]=el.value;
+      });
+      try{
+        localStorage.setItem("sgpFormulario",JSON.stringify(dados));
+      }catch(e){}
+    }
 
-let orders=JSON.parse(localStorage.getItem("sgp_orders")||"null")||defaultOrders;
+    function restaurarFormulario(){
+      const dados=carregarLocalStorage("sgpFormulario",{});
+      Object.entries(dados).forEach(([id,valor])=>{
+        const el=document.getElementById(id);
+        if(el && valor!==undefined && valor!==null) el.value=valor;
+      });
 
-function money(v){return v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
-function saveOrders(){localStorage.setItem("sgp_orders",JSON.stringify(orders))}
-function toast(msg){
- const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");
- clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.classList.remove("show"),2500);
-}
-function setTheme(theme){
- document.body.classList.toggle("dark",theme==="escuro");
- localStorage.setItem("sgp_tema",theme);
- document.getElementById("themeToggle").checked=theme==="escuro";
- document.getElementById("quickTheme").textContent=theme==="escuro"?"☀️":"🌙";
-}
-function setFontSize(v){
- document.body.classList.toggle("large-font",v==="large");
- localStorage.setItem("sgp_fonte",v);
- document.getElementById("fontSize").value=v;
-}
-function setNotifications(v){localStorage.setItem("sgp_notificacoes",v?"sim":"nao");document.getElementById("notifications").checked=v}
-function saveFilter(){
- const v=document.getElementById("filterStatus").value;
- localStorage.setItem("sgp_filtro",v);
- document.getElementById("savedFilterLabel").textContent=v;
- toast("💾 Filtro salvo: "+v);
-}
-function loadPreferences(){
- const theme=localStorage.getItem("sgp_tema")||"claro";
- const font=localStorage.getItem("sgp_fonte")||"normal";
- const notif=(localStorage.getItem("sgp_notificacoes")||"sim")==="sim";
- setTheme(theme);setFontSize(font);setNotifications(notif);
- document.getElementById("filterStatus").value=localStorage.getItem("sgp_filtro")||"Todos";
- document.getElementById("savedFilterLabel").textContent=document.getElementById("filterStatus").value;
-}
-function resetPreferences(){
- localStorage.removeItem("sgp_tema");localStorage.removeItem("sgp_fonte");localStorage.removeItem("sgp_notificacoes");localStorage.removeItem("sgp_filtro");
- loadPreferences();renderOrders();toast("🔄 Preferências restauradas");
-}
-function showPage(id){
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
- const names={dashboard:"Dashboard",pedidos:"Pedidos", "novo-pedido":"Novo pedido",produtos:"Produtos",preferencias:"Preferências"};
- document.getElementById("pageTitle").textContent=names[id]||"SGP";
- localStorage.setItem("sgp_ultima_aba",id);
- document.getElementById("sidebar").classList.remove("open");
- if(id==="pedidos")renderOrders();
- if(id==="dashboard")renderDashboard();
- if(id==="produtos")renderProducts();
-}
-function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open")}
-document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
-document.getElementById("quickTheme").addEventListener("click",()=>{
- const next=document.body.classList.contains("dark")?"claro":"escuro";setTheme(next);toast(next==="escuro"?"🌙 Modo escuro ativado":"☀️ Modo claro ativado");
-});
+      // Reaplica as máscaras sem alterar o conteúdo salvo.
+      const cpf=document.getElementById("cpfCliente");
+      const telefone=document.getElementById("telefoneCliente");
+      const nome=document.getElementById("clienteRapido");
+      if(cpf) formatarCPF(cpf);
+      if(telefone) formatarTelefone(telefone);
+      if(nome) formatarNome(nome);
 
-function renderProducts(){
- document.getElementById("productList").innerHTML=PRODUCTS.map(p=>`
- <div class="product-row"><div><strong>${p.icon} ${p.name}</strong><small>ID ${p.id} • Disponível</small></div><strong>${money(p.price)}</strong></div>`).join("");
- document.getElementById("product").innerHTML=PRODUCTS.map(p=>`<option value="${p.id}">${p.icon} ${p.name} — ${money(p.price)}</option>`).join("");
-}
-function statusClass(s){return s==="Pendente"?"pendente":s==="Em preparação"?"preparacao":"concluido"}
-function renderOrders(){
- const search=(document.getElementById("search").value||"").toLowerCase();
- const filter=document.getElementById("filterStatus").value;
- const list=orders.filter(o=>(filter==="Todos"||o.status===filter)&&o.customer.toLowerCase().includes(search));
- const body=document.getElementById("ordersBody");
- body.innerHTML=list.length?list.map(o=>`<tr>
- <td>#${o.id}</td><td><strong>${escapeHtml(o.customer)}</strong><br><small class="muted">${escapeHtml(o.phone||"")}</small></td>
- <td>${escapeHtml(o.product)} × ${o.qty}</td><td><strong>${money(o.total)}</strong></td>
- <td><span class="badge ${statusClass(o.status)}">${o.status}</span></td>
- <td><div class="actions"><button class="btn btn-secondary" onclick="viewOrder(${o.id})">👁️</button><button class="btn btn-danger" onclick="deleteOrder(${o.id})">🗑️</button></div></td>
- </tr>`).join(""):`<tr><td colspan="6" class="empty">Nenhum pedido encontrado.</td></tr>`;
-}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-function renderDashboard(){
- const total=orders.length,pending=orders.filter(o=>o.status==="Pendente").length,prep=orders.filter(o=>o.status==="Em preparação").length,revenue=orders.reduce((a,o)=>a+o.total,0);
- document.getElementById("statTotal").textContent=total;
- document.getElementById("statPending").textContent=pending;
- document.getElementById("statPreparing").textContent=prep;
- document.getElementById("statRevenue").textContent=money(revenue);
- const recent=orders.slice(-5).reverse();
- document.getElementById("recentOrders").innerHTML=recent.length?recent.map(o=>`<div class="product-row" style="margin-bottom:9px"><div><strong>#${o.id} • ${escapeHtml(o.customer)}</strong><small>${escapeHtml(o.product)} × ${o.qty}</small></div><span class="badge ${statusClass(o.status)}">${o.status}</span></div>`).join(""):`<div class="empty">Nenhum pedido cadastrado.</div>`;
- const counts=["Pendente","Em preparação","Concluído"].map(s=>({s,n:orders.filter(o=>o.status===s).length}));
- document.getElementById("statusSummary").innerHTML=counts.map(x=>`<div style="margin:15px 0"><div style="display:flex;justify-content:space-between;margin-bottom:7px"><span>${x.s}</span><strong>${x.n}</strong></div><div class="progress"><span style="width:${total?x.n/total*100:0}%"></span></div></div>`).join("");
-}
-function viewOrder(id){
- const o=orders.find(x=>x.id===id);if(!o)return;
- document.getElementById("orderDetails").innerHTML=`
- <div class="product-row"><div><strong>Pedido #${o.id}</strong><small>${new Date().toLocaleDateString("pt-BR")}</small></div><span class="badge ${statusClass(o.status)}">${o.status}</span></div>
- <div style="display:grid;gap:12px;margin-top:18px">
- <div><span class="muted">Cliente</span><br><strong>${escapeHtml(o.customer)}</strong></div>
- <div><span class="muted">Telefone</span><br>${escapeHtml(o.phone||"Não informado")}</div>
- <div><span class="muted">Produto</span><br>${escapeHtml(o.product)} × ${o.qty}</div>
- <div><span class="muted">Local</span><br>📍 Teresina – Shopping Rio Poty</div>
- <div><span class="muted">Observações</span><br>${escapeHtml(o.notes||"Nenhuma")}</div>
- <div style="font-size:20px"><span class="muted">Total</span><br><strong>${money(o.total)}</strong></div>
- </div>`;
- document.getElementById("orderModal").classList.add("show");
-}
-function closeModal(){document.getElementById("orderModal").classList.remove("show")}
-function deleteOrder(id){
- const o=orders.find(x=>x.id===id);if(!o)return;
- if(!confirm("Excluir o pedido #"+id+" de "+o.customer+"?"))return;
- orders=orders.filter(x=>x.id!==id);saveOrders();renderOrders();renderDashboard();toast("🗑️ Pedido excluído");
-}
-document.getElementById("orderForm").addEventListener("submit",e=>{
- e.preventDefault();
- const customer=document.getElementById("customer").value.trim();
- if(!/^[A-Za-zÀ-ÿ\s.'-]+$/.test(customer)){toast("⚠️ O nome deve conter apenas letras e espaços.");document.getElementById("customer").focus();return}
- const product=PRODUCTS.find(p=>p.id==document.getElementById("product").value);
- const qty=Number(document.getElementById("quantity").value);
- const order={id:Date.now(),customer,phone:document.getElementById("phone").value.trim(),product:product.name,qty,total:product.price*qty,status:document.getElementById("status").value,notes:document.getElementById("notes").value.trim()};
- orders.push(order);saveOrders();e.target.reset();document.getElementById("quantity").value=1;
- toast("✅ Pedido #"+order.id+" salvo com sucesso!");
- renderDashboard();showPage("pedidos");
-});
-document.getElementById("orderModal").addEventListener("click",e=>{if(e.target.id==="orderModal")closeModal()});
-loadPreferences();renderProducts();renderDashboard();renderOrders();
+      atualizarTotalRapido();
+    }
 
-const lastPage=localStorage.getItem("sgp_ultima_aba");
-if(lastPage && document.getElementById(lastPage))showPage(lastPage);
-</script>
+    function limparRascunhoFormulario(){
+      localStorage.removeItem("sgpFormulario");
+    }
+
+    function sincronizarPedidos(){
+      pedidosSalvos=[...document.querySelectorAll("#order-table-body tr")].map(tr=>({
+        id:tr.cells[0]?.innerText.trim(),
+        cliente:tr.cells[1]?.innerText.trim(),
+        data:tr.cells[2]?.innerText.trim(),
+        status:tr.dataset.status||"Recebido",
+        total:tr.cells[4]?.innerText.trim()
+      }));
+      salvarDados();
+    }
+
+    function restaurarPedidos(){
+      const tbody=document.getElementById("order-table-body");
+      if(!pedidosSalvos.length)return;
+      tbody.innerHTML="";
+      pedidosSalvos.forEach(p=>{
+        const tr=document.createElement("tr"); tr.dataset.status=p.status;
+        let acao=p.status==="Recebido"?'<button onclick="iniciarPedido(this)">Preparar</button>':
+          p.status==="Em preparação"?'<button onclick="concluirPedido(this)">Concluir</button>':
+          p.status==="Pendente"?'<button onclick="receberPedido(this)">Receber</button>':'✅';
+        const cls=p.status==="Concluído"?"status-concluido":p.status==="Pendente"?"status-pendente":p.status==="Recebido"?"status-recebido":"status-preparacao";
+        tr.innerHTML=`<td>${p.id}</td><td>${p.cliente}</td><td>${p.data}</td><td><span class="badge ${cls}">${p.status}</span></td><td>${p.total}</td><td>${acao}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    const money = v => "R$ " + Number(v).toFixed(2).replace(".",",");
+    function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500)}
+    function rolar(id){document.getElementById(id).scrollIntoView({behavior:"smooth"})}
+
+    function renderProdutos(){
+      const lista=document.getElementById("products-list"), busca=document.getElementById("search").value.toLowerCase();
+      lista.innerHTML="";
+      const filtrados=produtos.filter(p=>(categoriaAtual==="Todos"||p.cat===categoriaAtual)&&p.nome.toLowerCase().includes(busca));
+      if(!filtrados.length){lista.innerHTML='<div class="empty">Nenhum produto encontrado.</div>';return}
+      filtrados.forEach(p=>{
+        const div=document.createElement("div");div.className="product-card";
+        div.innerHTML=`<img class="product-image" src="${p.img}" alt="${p.nome}" onerror="this.src='https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=500'">
+          <div class="product-details"><span class="product-tag">${p.cat}</span><p class="product-name">${p.nome}</p>
+          <p class="price">${money(p.preco)}</p><small class="${p.estoque<=8?'stock-low':'stock-ok'}">Estoque: ${p.estoque}</small><button class="btn-block" onclick="adicionarProduto(${p.id})">🛒 Adicionar ao pedido</button></div>`;
+        lista.appendChild(div);
+      });
+      atualizarSelect();
+    }
+
+    function atualizarSelect(){
+      const s=document.getElementById("produtoRapido");const atual=s.value;
+      s.innerHTML=produtos.map(p=>`<option value="${p.id}">${p.nome} — ${money(p.preco)}</option>`).join("");
+      if(atual)s.value=atual; atualizarTotalRapido();
+    }
+
+    function adicionarProduto(id){
+      const p=produtos.find(x=>x.id===id); criarPedido(p.nome,p.preco,"Cliente novo");
+    }
+
+    function mostrarAlertaPedido(msg,tipo){
+      const box=document.getElementById("pedidoAlerta");
+      box.textContent=msg;
+      box.className="pedido-alert "+tipo;
+    }
+
+    function limparAlertaPedido(){
+      const box=document.getElementById("pedidoAlerta");
+      box.textContent="";
+      box.className="pedido-alert";
+    }
+
+    function validarCPF(cpf){
+      cpf=cpf.replace(/\D/g,"");
+      if(cpf.length!==11 || /^(\d)\1{10}$/.test(cpf)) return false;
+      let soma=0;
+      for(let i=0;i<9;i++) soma+=parseInt(cpf.charAt(i))*(10-i);
+      let resto=(soma*10)%11;
+      if(resto===10) resto=0;
+      if(resto!==parseInt(cpf.charAt(9))) return false;
+      soma=0;
+      for(let i=0;i<10;i++) soma+=parseInt(cpf.charAt(i))*(11-i);
+      resto=(soma*10)%11;
+      if(resto===10) resto=0;
+      return resto===parseInt(cpf.charAt(10));
+    }
+
+    function formatarCPF(input){
+      let v=input.value.replace(/\D/g,"").slice(0,11);
+      v=v.replace(/(\d{3})(\d)/,"$1.$2");
+      v=v.replace(/(\d{3})(\d)/,"$1.$2");
+      v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+      input.value=v;
+    }
+
+    function formatarTelefone(input){
+      let v=input.value.replace(/\D/g,"").slice(0,11);
+      if(v.length>10) v=v.replace(/^(\d{2})(\d{5})(\d{4}).*/,"($1) $2-$3");
+      else if(v.length>6) v=v.replace(/^(\d{2})(\d{4})(\d{0,4}).*/,"($1) $2-$3");
+      else if(v.length>2) v=v.replace(/^(\d{2})(\d+)/,"($1) $2");
+      else if(v.length) v="("+v;
+      input.value=v;
+    }
+
+    // Nome: permite apenas letras, espaços e acentos.
+    function formatarNome(input){
+      input.value=input.value.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ\s]/g,"").replace(/\s{2,}/g," ");
+    }
+
+    function validarNome(nome){
+      nome=nome.trim();
+      // Pelo menos nome e sobrenome, somente letras/acentos.
+      return nome.length>=3 &&
+             /^[A-Za-zÀ-ÖØ-öø-ÿ]+(?:\s+[A-Za-zÀ-ÖØ-öø-ÿ]+)+$/.test(nome);
+    }
+
+    function validarCampo(id,ok){
+      const el=document.getElementById(id);
+      if(!el) return;
+      const campo=el.closest(".pedido-field");
+      if(campo) campo.classList.toggle("invalid",!ok);
+    }
+
+    function criarPedidoCompleto(){
+      limparAlertaPedido();
+
+      const cliente=document.getElementById("clienteRapido").value.trim();
+      const cpf=document.getElementById("cpfCliente").value.trim();
+      const telefone=document.getElementById("telefoneCliente").value.trim();
+      const email=document.getElementById("emailCliente").value.trim();
+      const produtoId=document.getElementById("produtoRapido").value;
+      const qtd=parseInt(document.getElementById("qtdRapida").value,10);
+      const p=produtos.find(x=>x.id==produtoId);
+
+      const nomeOk=validarNome(cliente);
+      const cpfOk=validarCPF(cpf);
+      const telefoneOk=telefone.replace(/\D/g,"").length>=10;
+      const emailOk=!email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      const qtdOk=Number.isInteger(qtd) && qtd>=1;
+      const produtoOk=!!p;
+
+      validarCampo("clienteRapido",nomeOk);
+      validarCampo("cpfCliente",cpfOk);
+      validarCampo("telefoneCliente",telefoneOk);
+      validarCampo("emailCliente",emailOk);
+      validarCampo("qtdRapida",qtdOk);
+      validarCampo("produtoRapido",produtoOk);
+
+      if(!nomeOk || !cpfOk || !telefoneOk || !emailOk || !qtdOk || !produtoOk){
+        mostrarAlertaPedido("⚠️ Corrija os campos destacados antes de finalizar o pedido.","error");
+        toast("⚠️ Existem dados inválidos no pedido.");
+        return;
+      }
+
+      if(p.estoque<=0){
+        mostrarAlertaPedido("⚠️ Este produto está sem estoque.","error");
+        toast("⚠️ Produto sem estoque.");
+        return;
+      }
+
+      if(qtd>p.estoque){
+        validarCampo("qtdRapida",false);
+        mostrarAlertaPedido(`⚠️ Quantidade indisponível. Estoque atual: ${p.estoque}.`,"error");
+        toast("⚠️ Quantidade maior que o estoque disponível.");
+        return;
+      }
+
+      const valor=p.preco*qtd;
+      p.estoque-=qtd;
+      salvarDados();
+      criarPedido(p.nome,valor,cliente);
+      renderProdutos();
+
+      const obs=document.getElementById("observacoesPedido").value.trim();
+      const atividades=document.getElementById("activities");
+      const item=document.createElement("div");
+      item.className="activity";
+      item.innerHTML=`<div class="dot"></div><div><p><strong>Pedido #${nextOrderId-1}</strong> criado para ${cliente}.</p><small>CPF: ${cpf} • Local: Shopping Rio Poty${obs?" • Com observações":""}</small></div>`;
+      atividades.prepend(item);
+
+      document.getElementById("pedidoForm").reset();
+      limparRascunhoFormulario();
+      document.getElementById("qtdRapida").value=1;
+      atualizarSelect();
+      document.querySelectorAll(".pedido-field").forEach(c=>c.classList.remove("invalid"));
+      mostrarAlertaPedido(`✅ Pedido #${nextOrderId-1} realizado com sucesso! Total: ${money(valor)}.`,"success");
+      toast("✅ Pedido realizado com sucesso!");
+    }
+
+    function criarPedido(produto,valor,cliente){
+      totalOrders++; salesValue+=valor; clientes++;
+      const tbody=document.getElementById("order-table-body"),tr=document.createElement("tr");
+      tr.dataset.status="Recebido";
+      tr.innerHTML=`<td>${nextOrderId}</td><td>${cliente}</td><td>Agora</td>
+        <td><span class="badge status-recebido">Recebido</span></td><td>${money(valor)}</td>
+        <td><button onclick="iniciarPedido(this)">Preparar</button></td>`;
+      tbody.appendChild(tr);nextOrderId++;
+      sincronizarPedidos();
+      atualizarDashboard();toast("✅ Pedido criado com sucesso!");
+    }
+
+    function iniciarPedido(btn){
+      const tr=btn.closest("tr");tr.dataset.status="Em preparação";
+      tr.cells[3].innerHTML='<span class="badge status-preparacao">Em preparação</span>';
+      btn.textContent="Concluir";btn.onclick=()=>concluirPedido(btn);
+      sincronizarPedidos();toast("👨‍🍳 Pedido enviado para preparação.");
+    }
+
+    function concluirPedido(btn){
+      const tr=btn.closest("tr");tr.dataset.status="Concluído";
+      tr.cells[3].innerHTML='<span class="badge status-concluido">Concluído</span>';btn.replaceWith(document.createTextNode("✅"));
+      sincronizarPedidos();atualizarDashboard();toast("🎉 Pedido concluído!");
+    }
+
+    function receberPedido(btn){iniciarPedido(btn)}
+
+    function atualizarDashboard(){
+      document.getElementById("dash-sales").textContent=money(salesValue);
+      document.getElementById("dash-orders").textContent=totalOrders;
+      document.getElementById("dash-clients").textContent=clientes;
+      document.getElementById("ticketMedio").textContent=money(totalOrders?salesValue/totalOrders:0);
+      const pend=[...document.querySelectorAll("#order-table-body tr")].filter(r=>r.dataset.status==="Pendente").length;
+      document.getElementById("dash-pending").textContent=pend;
+      const pct=Math.min(100,totalOrders/60*100);
+      document.getElementById("metaBar").style.width=pct+"%";
+      document.getElementById("metaTexto").textContent=`${totalOrders} de 60 pedidos realizados — ${Math.round(pct)}% da meta.`;
+      localStorage.setItem("sgpTotalOrders",String(totalOrders));
+      localStorage.setItem("sgpSalesValue",String(salesValue));
+      localStorage.setItem("sgpClientes",String(clientes));
+    }
+
+    function filtrarTabela(status,botao){
+      document.querySelectorAll("#pedidos .filter-btn").forEach(b=>b.classList.remove("active"));botao.classList.add("active");
+      document.querySelectorAll("#order-table-body tr").forEach(r=>r.style.display=status==="todos"||r.dataset.status===status?"":"none");
+    }
+
+    function filtrarProdutos(cat,btn){
+      categoriaAtual=cat;document.querySelectorAll("#produtos .filter-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderProdutos();
+    }
+
+    function cadastrarProduto(){
+      const nome=document.getElementById("new-product-name").value.trim(), preco=parseFloat(document.getElementById("new-product-price").value);
+      let img=document.getElementById("new-product-img").value.trim();
+      const cat=document.getElementById("new-product-category").value;
+      const estoque=Math.max(0,parseInt(document.getElementById("new-product-stock").value)||0);
+      if(!nome||isNaN(preco)||preco<=0){toast("⚠️ Informe nome e preço válidos.");return}
+      if(!img)img="https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=500";
+      produtos.push({id:Date.now(),nome,preco,img,cat,estoque});
+      document.getElementById("new-product-name").value="";document.getElementById("new-product-price").value="";document.getElementById("new-product-img").value="";document.getElementById("new-product-stock").value="20";
+      salvarDados();renderProdutos();toast(`✅ ${nome} cadastrado!`);
+    }
+
+    function atualizarTotalRapido(){
+      const p=produtos.find(x=>x.id==document.getElementById("produtoRapido").value),q=parseInt(document.getElementById("qtdRapida").value)||1;
+      document.getElementById("totalRapido").textContent=money(p?p.preco*q:0);
+    }
+
+    function gerarRelatorio(){
+      const texto=`RELATÓRIO SGP — ${new Date().toLocaleString("pt-BR")}\\n\\nPedidos: ${totalOrders}\\nFaturamento: ${money(salesValue)}\\nClientes: ${clientes}\\nMeta: ${Math.round(Math.min(100,totalOrders/60*100))}%\\nStatus: Sistema operacional`;
+      const blob=new Blob([texto],{type:"text/plain"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="relatorio-sgp.txt";a.click();URL.revokeObjectURL(a.href);toast("📄 Relatório gerado!");
+    }
+
+    function exportarCSV(){
+      const rows=[["Pedido","Cliente","Data","Status","Total"],...[...document.querySelectorAll("#order-table-body tr")].map(r=>[...r.cells].slice(0,5).map(c=>c.innerText.trim()))];
+      const csv=rows.map(r=>r.map(v=>`"${v.replaceAll('"','""')}"`).join(";")).join("\\n");
+      const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="pedidos-sgp.csv";a.click();toast("⬇️ CSV exportado!");
+    }
+
+    function mostrarResumo(){alert(`📊 RESUMO DO SGP\\n\\nPedidos: ${totalOrders}\\nFaturamento: ${money(salesValue)}\\nClientes: ${clientes}\\nProdutos: ${produtos.length}\\nAvaliação: 4,9/5`)}
+    function limparPedidos(){
+      if(!confirm("Tem certeza que deseja limpar todos os pedidos?"))return;
+      document.getElementById("order-table-body").innerHTML="";
+      pedidosSalvos=[];salvarDados();atualizarDashboard();toast("🗑️ Pedidos removidos.");
+    }
+
+    function exportarBackup(){
+      const backup={
+        versao:"SGP Final Pro 4.0",
+        exportadoEm:new Date().toISOString(),
+        produtos,
+        pedidos:pedidosSalvos,
+        totalOrders,salesValue,nextOrderId,clientes
+      };
+      const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json;charset=utf-8"});
+      const url=URL.createObjectURL(blob),a=document.createElement("a");
+      a.href=url;a.download="backup-sgp.json";a.click();URL.revokeObjectURL(url);
+      toast("💾 Backup JSON exportado!");
+    }
+
+    function limparDadosLocais(){
+      const ok=confirm("Isso apagará os dados salvos neste navegador (produtos, pedidos, contadores e rascunho do formulário). Deseja continuar?");
+      if(!ok)return;
+      ["sgpProdutos","sgpPedidos","sgpTotalOrders","sgpSalesValue","sgpNextOrderId","sgpClientes","sgpFormulario"].forEach(k=>localStorage.removeItem(k));
+      toast("🗑️ Dados locais apagados. Recarregando o sistema...");
+      setTimeout(()=>location.reload(),900);
+    }
+
+    function aplicarTema(){
+      const dark=localStorage.getItem("sgpTema")==="1";
+      document.body.dataset.dark=dark?"1":"0";
+      document.body.style.background=dark?"#0f172a":"linear-gradient(135deg,#eef2ff,#f8fafc)";
+      document.body.style.color=dark?"#e2e8f0":"#1e293b";
+    }
+
+    function alternarTema(){
+      const dark=localStorage.getItem("sgpTema")==="1";
+      localStorage.setItem("sgpTema",dark?"0":"1");
+      aplicarTema();
+      toast(dark?"☀️ Tema claro ativado":"🌙 Tema escuro ativado");
+    }
+
+
+    function abrirLogin(){document.getElementById("loginModal").classList.add("open")}
+    function fecharLogin(){document.getElementById("loginModal").classList.remove("open")}
+    function entrarSistema(){
+      const nome=document.getElementById("loginNome").value.trim()||"Usuário";
+      const perfil=document.getElementById("loginPerfil").value;
+      fecharLogin();toast(`🔐 ${nome} entrou como ${perfil}.`);
+      document.getElementById("statusSistema").textContent=`🟢 Online — ${perfil}`;
+    }
+    function consultarIA(){
+      const tipo=document.getElementById("perguntaIA").value;
+      const pend=[...document.querySelectorAll("#order-table-body tr")].filter(r=>r.dataset.status==="Pendente").length;
+      const prep=[...document.querySelectorAll("#order-table-body tr")].filter(r=>r.dataset.status==="Em preparação").length;
+      const baixo=produtos.filter(p=>p.estoque<=8);
+      const estoqueTotal=produtos.reduce((s,p)=>s+(Number(p.estoque)||0),0);
+      const produtoDestaque=produtos.slice().sort((a,b)=>b.preco-a.preco)[0];
+      const ticket=totalOrders?salesValue/totalOrders:0;
+      const meta=Math.round(Math.min(100,totalOrders/60*100));
+      const respostas={
+        vendas:`📈 Análise de vendas: ${totalOrders} pedidos, ${money(salesValue)} de faturamento e ticket médio de ${money(ticket)}. `+
+          `A meta de 60 pedidos está em ${meta}%. Recomendação: destacar combos, produtos de maior valor e promoções nos horários de menor movimento.`,
+        estoque:baixo.length?
+          `📦 Alerta de estoque: ${baixo.length} produto(s) estão no nível mínimo — ${baixo.map(p=>p.nome).join(", ")}. `+
+          `Há ${estoqueTotal} unidade(s) somadas no estoque. Recomendo reposição antes de ampliar promoções.`:
+          `📦 Estoque saudável: nenhum produto está no nível crítico. Estoque total estimado: ${estoqueTotal} unidade(s). Continue acompanhando a saída dos itens.`,
+        pedidos:pend||prep?
+          `🧾 Fluxo de pedidos: ${pend} pendente(s) e ${prep} em preparação. Priorize os pendentes e acompanhe o tempo de preparo para reduzir atrasos.`:
+          `🧾 Fluxo organizado: não há pedidos pendentes ou em preparação neste momento. O atendimento está livre de filas operacionais.`,
+        resumo:`🤖 Resumo inteligente: ${totalOrders} pedidos, ${clientes} clientes, ${produtos.length} produtos e ${money(salesValue)} de faturamento. `+
+          `Ticket médio de ${money(ticket)}, ${baixo.length} item(ns) com estoque baixo e ${pend} pedido(s) pendente(s). `+
+          `Produto de maior preço cadastrado: ${produtoDestaque?produtoDestaque.nome:"nenhum"}.`
+      };
+      document.getElementById("respostaIA").innerHTML=respostas[tipo];
+      toast("🤖 Análise inteligente atualizada.");
+    }
+    function atualizarInsights(){
+      const baixo=produtos.filter(p=>p.estoque<=8);
+      document.getElementById("estoqueAviso").innerHTML=baixo.length?`<span class="stock-low">Atenção:</span> ${baixo.length} item(ns) no estoque mínimo: ${baixo.map(p=>p.nome).join(", ")}.`:`<span class="stock-ok">Estoque saudável:</span> nenhum produto no nível crítico.`;
+      toast("📌 Indicadores atualizados.");
+    }
+    function restaurarPreferencias(){
+      aplicarTema();
+    }
+
+    function atualizarDataHora(){document.getElementById("dataHora").textContent=new Date().toLocaleString("pt-BR")}
+    ["clienteRapido","cpfCliente","telefoneCliente","emailCliente","produtoRapido","qtdRapida","observacoesPedido"].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el){el.addEventListener("input",salvarFormulario);el.addEventListener("change",salvarFormulario);}
+    });
+    document.getElementById("search").addEventListener("input",renderProdutos);
+    document.getElementById("qtdRapida").addEventListener("input",atualizarTotalRapido);
+    document.getElementById("produtoRapido").addEventListener("change",atualizarTotalRapido);
+    document.getElementById("clienteRapido").addEventListener("input",function(){
+      formatarNome(this);
+      if(this.value.trim()) validarCampo("clienteRapido",validarNome(this.value));
+    });
+    document.getElementById("cpfCliente").addEventListener("input",function(){formatarCPF(this);});
+    document.getElementById("telefoneCliente").addEventListener("input",function(){formatarTelefone(this);});
+    document.getElementById("cpfCliente").addEventListener("blur",function(){
+      if(this.value.trim()) validarCampo("cpfCliente",validarCPF(this.value));
+    });
+    restaurarPreferencias();
+
+    // Garante que o rascunho seja salvo também quando a página for fechada,
+    // atualizada ou colocada em segundo plano.
+    window.addEventListener("beforeunload", salvarFormulario);
+    window.addEventListener("pagehide", salvarFormulario);
+    window.addEventListener("pageshow", restaurarFormulario);
+
+    setInterval(atualizarDataHora,1000);
+    atualizarDataHora();
+    renderProdutos();
+    restaurarPedidos();
+    restaurarFormulario();
+    atualizarDashboard();
+    atualizarInsights();
+  </script>
 </body>
 </html>
